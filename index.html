@@ -3,23 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>تلوزیونر - شبکه ScoreGames</title>
+    <title>تلوزیونر - شبکه‌ها</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/samim-font@v4.0.5/dist/font-face.css">
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-card: #ffffff;
+            --accent: #e94560;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --border: #dee2e6;
+            --radius: 16px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.06);
+            --transition: 0.25s ease;
+        }
 
-    <!-- css -->
-    <link rel="stylesheet" href="asstes/css/style.css">
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    <!-- js -->
-    <script src="asstes/js/script.js"></script>
+        body {
+            font-family: 'Samim', 'Segoe UI', 'Vazirmatn', Tahoma, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.35); z-index: 200; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
+        .overlay.show { opacity: 1; visibility: visible; }
+
+        .sidebar { position: fixed; top: 0; right: 0; width: 270px; height: 100%; background: #fff; z-index: 300; box-shadow: -4px 0 20px rgba(0,0,0,0.08); transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; padding: 24px 20px; gap: 8px; }
+        .sidebar.show { transform: translateX(0); }
+        .sidebar .sidebar-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .sidebar .sidebar-header span { font-weight: 700; font-size: 1.1rem; }
+        .sidebar .close-btn { background: none; border: none; font-size: 28px; cursor: pointer; color: var(--text-secondary); line-height: 1; padding: 4px; }
+        .sidebar .menu-item { padding: 14px 16px; border-radius: 12px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: background 0.2s; display: flex; align-items: center; gap: 12px; border: none; background: transparent; color: var(--text-primary); text-align: right; width: 100%; }
+        .sidebar .menu-item:hover { background: #f1f3f5; }
+
+        .header { background: var(--bg-primary); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); background: rgba(255,255,255,0.92); }
+        .header .logo { display: flex; align-items: center; gap: 10px; font-size: 1.5rem; font-weight: 700; cursor: pointer; user-select: none; color: var(--text-primary); }
+        .header .logo img { width: 40px; height: 40px; border-radius: 10px; object-fit: cover; }
+        .header .logo .brand-name { font-family: 'Samim', 'Samim FD', sans-serif; font-weight: 700; }
+        .hamburger { background: none; border: none; font-size: 28px; cursor: pointer; color: var(--text-primary); display: flex; flex-direction: column; gap: 5px; padding: 8px; border-radius: 10px; transition: background 0.2s; }
+        .hamburger:hover { background: #f1f3f5; }
+        .hamburger span { display: block; width: 22px; height: 2px; background: var(--text-primary); border-radius: 2px; }
+
+        .main-container { max-width: 900px; margin: 0 auto; padding: 28px 16px 40px; }
+
+        .section { display: none; animation: fadeSlideIn 0.35s ease-out; }
+        .section.active { display: block; }
+        @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+        .section-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .section-title::before { content: ''; width: 4px; height: 26px; background: var(--accent); border-radius: 4px; }
+
+        .main-logo { display: block; margin: 0 auto 20px; max-width: 200px; height: auto; border-radius: 20px; }
+
+        .search-box { margin-bottom: 20px; }
+        .search-box input { width: 100%; padding: 12px 16px; border-radius: 14px; border: 1px solid var(--border); font-size: 0.95rem; background: #fff; transition: border 0.2s, box-shadow 0.2s; font-family: inherit; }
+        .search-box input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(233,68,96,0.1); }
+
+        .channels-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
+        .channel-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; cursor: pointer; transition: var(--transition); box-shadow: var(--shadow); }
+        .channel-card:hover { transform: translateY(-3px); border-color: #adb5bd; box-shadow: 0 6px 18px rgba(0,0,0,0.08); }
+        .channel-card.hidden { display: none; }
+        .channel-card .channel-logo { width: 60px; height: 60px; border-radius: 14px; object-fit: cover; margin-bottom: 12px; border: 1px solid var(--border); background: #f1f3f5; }
+        .channel-name { font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+        .channel-desc { font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px; }
+
+        .back-btn { display: inline-flex; align-items: center; gap: 6px; background: #fff; border: 1px solid var(--border); padding: 9px 16px; border-radius: 30px; cursor: pointer; font-size: 0.9rem; font-weight: 600; margin-bottom: 18px; }
+        .back-btn:hover { background: #f1f3f5; border-color: #adb5bd; }
+
+        .player-wrapper { background: #000; border-radius: var(--radius); overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.08); margin-bottom: 18px; border: 1px solid var(--border); position: relative; min-height: 280px; display: flex; align-items: center; justify-content: center; }
+        .player-wrapper video { width: 100%; display: block; background: #000; pointer-events: auto; }
+        .player-wrapper .end-screen { display: none; text-align: center; color: #fff; padding: 40px; }
+        .player-wrapper .end-screen.show { display: block; }
+        .player-wrapper .end-screen img { max-width: 120px; margin-bottom: 20px; border-radius: 20px; }
+
+        .admin-lock-btn { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.6); color: #fff; border: none; width: 38px; height: 38px; border-radius: 50%; font-size: 18px; cursor: pointer; z-index: 20; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+
+        /* دکمه مدیریت صدا */
+        .mute-toggle-btn {
+            position: absolute; bottom: 12px; right: 12px;
+            background: rgba(0,0,0,0.65); color: #fff; border: none;
+            width: 40px; height: 40px; border-radius: 50%; font-size: 20px;
+            cursor: pointer; z-index: 20; display: flex; align-items: center; justify-content: center;
+            backdrop-filter: blur(6px); transition: background 0.2s;
+        }
+        .mute-toggle-btn:hover { background: rgba(0,0,0,0.85); }
+
+        video::-webkit-media-controls { display: none !important; }
+        video::-webkit-media-controls-enclosure { display: none !important; }
+
+        .player-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+        .btn { padding: 11px 20px; border-radius: 30px; font-size: 0.9rem; font-weight: 600; cursor: pointer; border: none; transition: var(--transition); display: flex; align-items: center; gap: 6px; }
+        .btn-secondary { background: #fff; color: var(--text-primary); border: 1px solid var(--border); }
+        .btn-secondary:hover { background: #f8f9fa; border-color: #adb5bd; }
+
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
+        .modal.show { opacity: 1; visibility: visible; }
+        .modal-box { background: #fff; border-radius: var(--radius); padding: 28px 24px; width: 90%; max-width: 480px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-height: 85vh; overflow-y: auto; }
+        .modal-box h3 { font-size: 1.2rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .modal-box input, .modal-box textarea { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border); font-size: 1rem; margin-bottom: 16px; font-family: inherit; }
+        .modal-box .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+        .btn-primary { background: var(--accent); color: #fff; }
+        .btn-primary:hover { background: #c92a42; }
+
+        .admin-panel { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+        .admin-panel label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.85rem; }
+        .playlist-item { display: flex; align-items: center; gap: 8px; padding: 8px; background: #f8f9fa; border-radius: 8px; margin-bottom: 6px; font-size: 0.85rem; }
+        .playlist-item span { flex: 1; word-break: break-all; }
+        .playlist-item button { background: #dc3545; border: none; color: #fff; border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: 0.8rem; }
+        .playlist-item .move-btns { display: flex; gap: 4px; margin-right: 8px; }
+        .playlist-item .move-btns button { background: #6c757d; font-size: 0.8rem; padding: 4px 8px; }
+        .status-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-right: 8px; }
+        .status-live { background: #d4edda; color: #155724; }
+        .status-stopped { background: #f8d7da; color: #721c24; }
+
+        .content-card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); }
+        .content-card p { margin-bottom: 16px; font-size: 1rem; line-height: 1.7; }
+        .rules-list { list-style: none; padding: 0; }
+        .rules-list li { padding: 12px 16px; background: #f8f9fa; border-radius: 12px; margin-bottom: 10px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+        .rules-list li::before { content: "✓"; color: #22c55e; font-weight: bold; font-size: 1.2rem; }
+
+        .form-group { margin-bottom: 16px; text-align: right; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 6px; color: var(--text-primary); font-size: 0.9rem; }
+        .form-group input, .form-group textarea { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border); font-size: 0.95rem; font-family: inherit; transition: border 0.2s; background: #f9fafb; }
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--accent); background: #fff; }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+
+        .btn-copy { background: #3b82f6; color: #fff; padding: 10px 16px; border-radius: 30px; font-size: 0.85rem; font-weight: 600; cursor: pointer; border: none; transition: var(--transition); display: inline-flex; align-items: center; gap: 8px; }
+        .btn-copy:hover { background: #2563eb; }
+        .btn-copy.copied { background: #22c55e; }
+
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #fff; color: #212529; padding: 12px 24px; border-radius: 30px; font-weight: 600; font-size: 0.9rem; border: 1px solid #dee2e6; box-shadow: 0 6px 20px rgba(0,0,0,0.1); z-index: 9999; transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; text-align: center; }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        .fab {
+            position: fixed; bottom: 24px; left: 24px; width: 56px; height: 56px; border-radius: 50%;
+            background: var(--accent); color: #fff; font-size: 28px; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 6px 20px rgba(233,68,96,0.4); cursor: pointer; z-index: 150; transition: transform 0.2s; border: none; outline: none;
+        }
+        .fab:hover { transform: scale(1.08); }
+        .fab:active { transform: scale(0.95); }
+
+        /* استایل مودال روبیکا */
+        .rubika-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.35s ease, visibility 0.35s ease; }
+        .rubika-modal.show { opacity: 1; visibility: visible; }
+        .rubika-dialog { background: #fff; border-radius: 24px; padding: 32px 24px; width: 90%; max-width: 420px; box-shadow: 0 25px 70px rgba(0,0,0,0.4); text-align: center; position: relative; animation: rubikaPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes rubikaPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .rubika-close { position: absolute; top: 14px; left: 18px; background: none; border: none; font-size: 24px; cursor: pointer; color: #888; transition: color 0.2s; padding: 4px; }
+        .rubika-close:hover { color: #333; }
+        .rubika-icon { width: 80px; height: 80px; background: linear-gradient(135deg, #8b5cf6, #a855f7); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 8px 24px rgba(139,92,246,0.35); }
+        .rubika-icon svg { width: 44px; height: 44px; fill: #fff; }
+        .rubika-dialog h3 { font-size: 1.4rem; font-weight: 800; margin-bottom: 10px; color: #1e1e2f; }
+        .rubika-dialog p { font-size: 0.95rem; color: #5b5b7a; margin-bottom: 24px; line-height: 1.7; }
+        .rubika-link { display: inline-block; background: #f3f0ff; color: #6d28d9; padding: 10px 20px; border-radius: 30px; font-weight: 700; font-size: 0.9rem; text-decoration: none; margin-bottom: 18px; word-break: break-all; border: 1px dashed #c4b5fd; }
+        .rubika-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #8b5cf6, #a855f7); color: #fff; padding: 14px 28px; border-radius: 30px; font-weight: 700; font-size: 1rem; text-decoration: none; border: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 6px 20px rgba(139,92,246,0.4); width: 100%; margin-bottom: 10px; }
+        .rubika-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(139,92,246,0.5); }
+        .rubika-skip { background: none; border: none; color: #999; font-size: 0.8rem; cursor: pointer; padding: 8px; font-weight: 600; }
+        .rubika-skip:hover { color: #666; }
+
+        @media (max-width: 600px) {
+            .header { padding: 10px 14px; }
+            .header .logo img { width: 34px; height: 34px; }
+            .channels-grid { grid-template-columns: 1fr; }
+            .player-actions { flex-direction: column; }
+            .sidebar { width: 250px; }
+            .main-logo { max-width: 150px; }
+            .fab { width: 48px; height: 48px; font-size: 24px; bottom: 16px; left: 16px; }
+        }
+    </style>
 </head>
 <body>
+
+<!-- مودال خوش‌آمدگویی روبیکا -->
+<div class="rubika-modal show" id="rubikaModal">
+    <div class="rubika-dialog">
+        <button class="rubika-close" onclick="closeRubikaModal()">✕</button>
+        <div class="rubika-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+        </div>
+        <h3>📱 به کانال روبیکا ما بپیوندید!</h3>
+        <p>برای اطلاع از جدیدترین اخبار، برنامه‌ها و پخش‌های زنده، همین حالا عضو کانال روبیکا شوید.</p>
+        <div class="rubika-link" id="rubikaLinkDisplay">http://rubika.ir/Scoregames</div>
+        <a href="http://rubika.ir/Scoregames" target="_blank" rel="noopener noreferrer" class="rubika-btn">
+            🚀 ورود به کانال روبیکا
+        </a>
+        <button class="rubika-skip" onclick="closeRubikaModal()">بعداً یادآوری کن</button>
+    </div>
+</div>
 
 <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
 <div class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-        <span>منو</span>
-        <button class="close-btn" onclick="closeSidebar()">✕</button>
-    </div>
+    <div class="sidebar-header"><span>منو</span><button class="close-btn" onclick="closeSidebar()">✕</button></div>
     <button class="menu-item" onclick="navigateTo('home')">📺 شبکه‌ها</button>
     <button class="menu-item" onclick="openSupportChat()">🎧 پشتیبانی</button>
     <button class="menu-item" onclick="navigateTo('create')">➕ ساخت شبکه</button>
@@ -29,44 +207,55 @@
 <header class="header">
     <div class="logo" onclick="goHome()">
         <img src="https://cdn.imgurl.ir/uploads/i378724_file_0000000070ac820aa0e4e908875695f0.png" alt="تلوزیونر">
-        <span>تلوزیونر</span>
+        <span class="brand-name">تلوزیونر</span>
     </div>
-    <button class="hamburger" onclick="openSidebar()" aria-label="منو">
-        <span></span><span></span><span></span>
-    </button>
+    <button class="hamburger" onclick="openSidebar()" aria-label="منو"><span></span><span></span><span></span></button>
 </header>
 
 <main class="main-container">
 
     <section id="homeSection" class="section active">
+        <img src="https://cdn.imgurl.ir/uploads/q12337_file_0000000099c88246a3aa5ba38b34bd0d.png" alt="لوگو" class="main-logo">
         <h2 class="section-title">شبکه‌های تلویزیونی</h2>
-        <div class="channels-grid">
-            <div class="channel-card" onclick="openChannel('scoregames')">
+        <div class="search-box"><input type="text" id="searchInput" placeholder="🔍 جستجوی شبکه‌ها..." oninput="filterChannels()"></div>
+        <div class="channels-grid" id="channelsGrid">
+            <div class="channel-card" data-channel="scoregames" onclick="openChannel('scoregames')">
                 <img class="channel-logo" src="https://cdn.imgurl.ir/uploads/n147901_IMG_20260708_023235_176.jpg" alt="ScoreGames">
                 <div class="channel-name">
                     ScoreGames
-                    <img src="https://cdn.imgurl.ir/uploads/e2588_InShot_20260728_050315092.png" alt="تیک آبی" class="verified-badge">
+                    <img src="https://cdn.imgurl.ir/uploads/e2588_InShot_20260728_050315092.png" alt="تیک آبی" style="width: 20px; height: 20px; object-fit: contain;">
                 </div>
                 <div class="channel-desc">شبکه تخصصی بازی‌ها و امتیازات - پخش پیوسته</div>
             </div>
-            <div class="empty-channels">🚀 شبکه‌های بیشتر به‌زودی اضافه می‌شوند...</div>
+            <div class="channel-card" data-channel="toonplus" onclick="openChannel('toonplus')">
+                <img class="channel-logo" src="https://cdn.imgurl.ir/uploads/m7236_file_0000000022d081f5a74f63c6b6840b99.png" alt="TOON+">
+                <div class="channel-name">
+                    TOON+
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="#22c55e" style="flex-shrink: 0;">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                </div>
+                <div class="channel-desc">برنامه کودک</div>
+            </div>
         </div>
     </section>
 
     <section id="playerSection" class="section player-page">
         <button class="back-btn" onclick="goHome()">← بازگشت به لیست شبکه‌ها</button>
-        <h2 class="section-title" id="playerChannelTitle">
-            <img src="https://cdn.imgurl.ir/uploads/n147901_IMG_20260708_023235_176.jpg" alt="ScoreGames" style="width:38px; height:38px; border-radius:10px; object-fit:cover;">
-            ScoreGames
-            <img src="https://cdn.imgurl.ir/uploads/e2588_InShot_20260728_050315092.png" alt="تیک آبی" class="verified-badge" style="width:30px; height:30px;">
-        </h2>
+        <h2 class="section-title" id="playerChannelTitle"></h2>
 
         <div class="player-wrapper" id="playerWrapper">
-            <video id="mainVideo"
-                   src="https://cdn.imgurl.ir/uploads/u80121_kwp6vkv-360-1785196403001.mp4"
-                   loop autoplay muted playsinline preload="auto"
-                   poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='450'%3E%3Crect fill='%23f8f9fa' width='800' height='450'/%3E%3Ctext fill='%23e94560' font-size='36' font-weight='bold' x='50%25' y='50%25' text-anchor='middle' dy='.1em' font-family='sans-serif'%3E🎮 ScoreGames%3C/text%3E%3C/svg%3E"
+            <button class="admin-lock-btn" id="adminLockBtn" title="پنل مدیریت پخش زنده">🔒</button>
+            <!-- دکمه مدیریت صدا -->
+            <button class="mute-toggle-btn" id="muteToggleBtn" title="فعال/غیرفعال کردن صدا">🔇</button>
+            <video id="mainVideo" autoplay playsinline preload="auto"
+                   poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='450'%3E%3Crect fill='%23000' width='800' height='450'/%3E%3Ctext fill='%23fff' font-size='36' font-weight='bold' x='50%25' y='50%25' text-anchor='middle' dy='.1em' font-family='sans-serif'%3E📺%3C/text%3E%3C/svg%3E"
                    oncontextmenu="return false;"></video>
+            <div class="end-screen" id="endScreen">
+                <img src="" alt="" id="endScreenLogo">
+                <h3>هیچ ویدیویی برای پخش وارد نشده است</h3>
+                <p>لطفاً از پنل مدیریت ویدیو اضافه کنید.</p>
+            </div>
         </div>
 
         <div class="player-actions">
@@ -80,11 +269,7 @@
         <h2 class="section-title">قوانین</h2>
         <div class="content-card">
             <p>📜 لطفاً قوانین زیر را برای استفاده از تلوزیونر رعایت فرمایید:</p>
-            <ul class="rules-list">
-                <li>گزاشتن محتوا درست</li>
-                <li>اسمی درست برای شبکه خود</li>
-                <li>پاسخگو</li>
-            </ul>
+            <ul class="rules-list"><li>گزاشتن محتوا درست</li><li>اسمی درست برای شبکه خود</li><li>پاسخگو</li></ul>
             <p style="margin-top: 16px; color: var(--text-secondary);">⚡ رعایت این موارد باعث می‌شود تجربه بهتری برای همه کاربران فراهم شود.</p>
         </div>
     </section>
@@ -92,35 +277,14 @@
     <section id="createSection" class="section">
         <button class="back-btn" onclick="goHome()">← بازگشت به صفحه اصلی</button>
         <h2 class="section-title">ساخت شبکه</h2>
-
-        <div class="content-card" style="margin-bottom: 20px;">
-            <p>📜 <strong>ابتدا قوانین را مطالعه کنید:</strong></p>
-            <ul class="rules-list">
-                <li>گزاشتن محتوا درست</li>
-                <li>اسمی درست برای شبکه خود</li>
-                <li>پاسخگو</li>
-            </ul>
-        </div>
-
+        <div class="content-card" style="margin-bottom: 20px;"><p>📜 <strong>ابتدا قوانین را مطالعه کنید:</strong></p><ul class="rules-list"><li>گزاشتن محتوا درست</li><li>اسمی درست برای شبکه خود</li><li>پاسخگو</li></ul></div>
         <div class="content-card" id="formContainer">
             <p style="font-weight: 700; margin-bottom: 20px;">📝 فرم درخواست شبکه</p>
-            <div class="form-group">
-                <label>اسم شبکه:</label>
-                <input type="text" id="networkName" placeholder="نام شبکه خود را وارد کنید">
-            </div>
-            <div class="form-group">
-                <label>توضیحات:</label>
-                <textarea id="networkDesc" placeholder="توضیحاتی درباره شبکه خود بنویسید"></textarea>
-            </div>
-            <div class="form-group">
-                <label>لینک دائمی لوگو شبکه:</label>
-                <input type="url" id="networkLogo" placeholder="https://example.com/logo.png">
-            </div>
-            <div class="form-group">
-                <label>هر چند وقت یک بار می‌آیید و فیلم اضافه می‌کنید:</label>
-                <input type="text" id="networkFrequency" placeholder="مثلاً: روزانه، هفتگی">
-            </div>
-
+            <div class="form-group"><label>اسم شبکه:</label><input type="text" id="networkName" placeholder="نام شبکه خود را وارد کنید"></div>
+            <div class="form-group"><label>توضیحات:</label><textarea id="networkDesc" placeholder="توضیحاتی درباره شبکه خود بنویسید"></textarea></div>
+            <div class="form-group"><label>لینک دائمی لوگو شبکه:</label><input type="url" id="networkLogo" placeholder="https://example.com/logo.png"></div>
+            <div class="form-group"><label>هر چند وقت یک بار می‌آیید و فیلم اضافه می‌کنید:</label><input type="text" id="networkFrequency" placeholder="مثلاً: روزانه، هفتگی"></div>
+            <div class="form-group"><label>رمز پنل مدیریت (خصوصی):</label><input type="text" id="networkPassword" placeholder="رمز دلخواه برای پنل"></div>
             <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 12px;">
                 <button class="btn-copy" id="copyFormBtn" onclick="copyFormContent()">📋 کپی کل فرم</button>
                 <span style="font-weight: 600; color: var(--text-secondary); margin: 0 8px;">سپس در روبیکا ارسال کنید:</span>
@@ -131,185 +295,452 @@
 
 </main>
 
+<button class="fab" id="fab" title="ساخت شبکه جدید" onclick="navigateTo('create')">＋</button>
+
+<div class="modal" id="adminModal"><div class="modal-box" id="modalContent"></div></div>
 <div class="toast" id="toast"></div>
 
-<!-- اسکریپت گوفتینو -->
 <script type="text/javascript">
   !function(){var i="jb8b5f",d=document,g=d.createElement("script"),s="https://www.goftino.com/widget/"+i,l=localStorage.getItem("goftino_"+i);g.type="text/javascript",g.async=!0,g.src=l?s+"?o="+l:s;d.getElementsByTagName("head")[0].appendChild(g);}();
 </script>
 
 <script>
+    // ========== مودال روبیکا ==========
+    function closeRubikaModal() {
+        document.getElementById('rubikaModal').classList.remove('show');
+        localStorage.setItem('rubika_modal_closed', 'true');
+    }
+
+    window.addEventListener('load', function() {
+        const modalClosed = localStorage.getItem('rubika_modal_closed');
+        if (!modalClosed) {
+            setTimeout(() => {
+                document.getElementById('rubikaModal').classList.add('show');
+            }, 800);
+        }
+    });
+
+    document.getElementById('rubikaModal').addEventListener('click', function(e) {
+        if (e.target === this) closeRubikaModal();
+    });
+
+    // ========== اطلاعات اولیه شبکه‌ها ==========
+    const DEFAULT_CHANNELS = {
+        scoregames: {
+            name: 'ScoreGames',
+            desc: 'شبکه تخصصی بازی‌ها و امتیازات',
+            logo: 'https://cdn.imgurl.ir/uploads/n147901_IMG_20260708_023235_176.jpg',
+            password: 'Pohl5468@',
+            playlist: [],
+            durations: []
+        },
+        toonplus: {
+            name: 'TOON+',
+            desc: 'برنامه کودک',
+            logo: 'https://cdn.imgurl.ir/uploads/m7236_file_0000000022d081f5a74f63c6b6840b99.png',
+            password: 'TOONTOON',
+            playlist: [],
+            durations: []
+        }
+    };
+
+    let channels = JSON.parse(localStorage.getItem('televizioner_channels'));
+    if (!channels || Object.keys(channels).length === 0) {
+        channels = DEFAULT_CHANNELS;
+        localStorage.setItem('televizioner_channels', JSON.stringify(channels));
+    } else {
+        for (const [key, value] of Object.entries(DEFAULT_CHANNELS)) {
+            if (!channels[key]) channels[key] = value;
+        }
+        localStorage.setItem('televizioner_channels', JSON.stringify(channels));
+    }
+
+    let currentChannelId = null;
     const wrapper = document.getElementById('playerWrapper');
     const video = document.getElementById('mainVideo');
+    const endScreen = document.getElementById('endScreen');
+    const endScreenLogo = document.getElementById('endScreenLogo');
     const fullscreenBtn = document.getElementById('fullscreenBtn');
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('overlay');
+    const adminModal = document.getElementById('adminModal');
+    const modalContent = document.getElementById('modalContent');
+    const adminLockBtn = document.getElementById('adminLockBtn');
+    const muteToggleBtn = document.getElementById('muteToggleBtn');
+    const fab = document.getElementById('fab');
 
-    function openSidebar() {
-        sidebar.classList.add('show');
-        overlay.classList.add('show');
+    let isAdminLoggedIn = false;
+    let syncInterval = null;
+    const MIDNIGHT = new Date(); MIDNIGHT.setHours(0,0,0,0);
+
+    // مدیریت حالت صدا
+    function updateMuteButton() {
+        if (video.muted) {
+            muteToggleBtn.textContent = '🔇';
+            muteToggleBtn.title = 'صدا قطع است – برای فعال کردن کلیک کنید';
+        } else {
+            muteToggleBtn.textContent = '🔊';
+            muteToggleBtn.title = 'صدا فعال است – برای قطع کردن کلیک کنید';
+        }
     }
 
-    function closeSidebar() {
-        sidebar.classList.remove('show');
-        overlay.classList.remove('show');
-    }
+    muteToggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        video.muted = !video.muted;
+        updateMuteButton();
+        // تلاش برای پخش در صورت قطع
+        if (video.paused) video.play().catch(()=>{});
+        showToast(video.muted ? '🔇 صدا قطع شد' : '🔊 صدا فعال شد');
+    });
+
+    video.addEventListener('volumechange', updateMuteButton);
+    // اولویت با muted خود video
+    video.addEventListener('loadedmetadata', updateMuteButton);
+    video.addEventListener('play', () => {
+        // اگر مرورگر خودش mute کرده باشد، دکمه را به‌روز می‌کنیم
+        updateMuteButton();
+    });
+
+    function saveChannels() { localStorage.setItem('televizioner_channels', JSON.stringify(channels)); }
+    function getChannelData(channelId) { return channels[channelId] || {}; }
+
+    function openSidebar() { sidebar.classList.add('show'); overlay.classList.add('show'); }
+    function closeSidebar() { sidebar.classList.remove('show'); overlay.classList.remove('show'); }
 
     function navigateTo(page) {
         closeSidebar();
         if (page === 'home') goHome();
-        else if (page === 'rules') {
-            if (video && !video.paused) video.pause();
-            if (document.fullscreenElement || video.webkitDisplayingFullscreen) exitFullscreen();
-            showSection('rulesSection');
-        } else if (page === 'create') {
-            if (video && !video.paused) video.pause();
-            if (document.fullscreenElement || video.webkitDisplayingFullscreen) exitFullscreen();
-            showSection('createSection');
-        }
+        else if (page === 'rules') { stopPlaybackAndMute(); showSection('rulesSection'); }
+        else if (page === 'create') { stopPlaybackAndMute(); showSection('createSection'); }
+    }
+
+    function stopPlaybackAndMute() {
+        video.muted = true;
+        updateMuteButton();
+        if (syncInterval) { clearInterval(syncInterval); syncInterval = null; }
     }
 
     function openSupportChat() {
         closeSidebar();
-        // تلاش برای باز کردن ویجت گوفتینو
-        if (typeof Goftino !== 'undefined' && Goftino.open) {
-            Goftino.open();
-        } else {
-            // اگر هنوز بارگذاری نشده، صبر می‌کنیم
-            setTimeout(() => {
-                if (typeof Goftino !== 'undefined' && Goftino.open) {
-                    Goftino.open();
-                } else {
-                    showToast('⚠️ پشتیبانی آنلاین در حال بارگذاری است، لطفاً چند لحظه دیگر امتحان کنید.');
-                }
-            }, 1500);
-        }
+        if (typeof Goftino !== 'undefined' && Goftino.open) Goftino.open();
+        else setTimeout(() => { if (typeof Goftino !== 'undefined' && Goftino.open) Goftino.open(); }, 1500);
     }
 
     function showSection(id) {
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
+        fab.style.display = (id === 'homeSection') ? 'flex' : 'none';
     }
 
     function goHome() {
+        stopPlaybackAndMute();
+        currentChannelId = null;
         showSection('homeSection');
-        if (video && !video.paused) video.pause();
-        if (document.fullscreenElement || video.webkitDisplayingFullscreen) exitFullscreen();
+        document.getElementById('searchInput').value = '';
+        filterChannels();
     }
 
-    function openChannel(name) {
-        if (name === 'scoregames') {
-            showSection('playerSection');
-            document.getElementById('playerChannelTitle').innerHTML = `
-                <img src="https://cdn.imgurl.ir/uploads/n147901_IMG_20260708_023235_176.jpg" alt="ScoreGames" style="width:38px; height:38px; border-radius:10px; object-fit:cover;">
-                ScoreGames
-                <img src="https://cdn.imgurl.ir/uploads/e2588_InShot_20260728_050315092.png" alt="تیک آبی" class="verified-badge" style="width:30px; height:30px;">
-            `;
-            video.currentTime = 0;
-            video.muted = true;
-            video.play().catch(() => {});
+    function openChannel(channelId) {
+        currentChannelId = channelId;
+        const ch = getChannelData(channelId);
+        let badgeHtml = '';
+        if (channelId === 'scoregames') {
+            badgeHtml = '<img src="https://cdn.imgurl.ir/uploads/e2588_InShot_20260728_050315092.png" alt="تیک آبی" style="width:22px;height:22px;object-fit:contain;margin-right:6px;">';
+        } else if (channelId === 'toonplus') {
+            badgeHtml = '<svg width="22" height="22" viewBox="0 0 24 24" fill="#22c55e" style="flex-shrink:0;margin-right:6px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>';
+        }
+        document.getElementById('playerChannelTitle').innerHTML = `<img src="${ch.logo}" alt="${ch.name}" style="width:38px;height:38px;border-radius:10px;object-fit:cover;"> ${ch.name} ${badgeHtml}`;
+        endScreenLogo.src = ch.logo;
+        syncToLivePoint();
+        showSection('playerSection');
+        updateMuteButton();
+    }
+
+    function showPlaylist() { showToast('📋 برای دیدن لیست پخش، وارد پنل مدیریت شوید.'); }
+
+    function filterChannels() {
+        const query = document.getElementById('searchInput').value.trim().toLowerCase();
+        document.querySelectorAll('#channelsGrid .channel-card').forEach(card => {
+            const ch = getChannelData(card.dataset.channel);
+            const name = (ch.name||'').toLowerCase(), desc = (ch.desc||'').toLowerCase();
+            card.classList.toggle('hidden', query && !name.includes(query) && !desc.includes(query));
+        });
+    }
+
+    // ========== پخش زنده ==========
+    function getCurrentPlaylist() { return currentChannelId ? getChannelData(currentChannelId).playlist || [] : []; }
+    function getCurrentDurations() { return currentChannelId ? getChannelData(currentChannelId).durations || [] : []; }
+    function getTotalDuration() { return getCurrentDurations().reduce((s,d)=>s+d,0); }
+
+    function getLivePosition() {
+        const pl = getCurrentPlaylist(), dur = getCurrentDurations();
+        if (!pl.length || !getTotalDuration()) return null;
+        const elapsed = (Date.now() - MIDNIGHT.getTime())/1000 % getTotalDuration();
+        let acc = 0;
+        for (let i=0; i<pl.length; i++) {
+            if (elapsed < acc + dur[i]) return { index: i, offset: elapsed - acc };
+            acc += dur[i];
+        }
+        return { index:0, offset:0 };
+    }
+
+    function forcePlay() {
+        if (video.paused) {
+            // تلاش برای پخش بدون تغییر اجباری muted (مرورگر تصمیم می‌گیرد)
+            video.play().catch(() => {
+                // اگر مرورگر reject کرد، با muted=true تلاش کن
+                video.muted = true;
+                updateMuteButton();
+                video.play().catch(()=>{});
+            });
         }
     }
 
-    function showPlaylist() {
-        showToast('📋 فعلاً هیچ لیست پخشی برای شبکه ScoreGames وجود ندارد.');
+    function syncToLivePoint() {
+        if (syncInterval) clearInterval(syncInterval);
+        endScreen.classList.remove('show'); video.style.display = 'block';
+        const pl = getCurrentPlaylist();
+        if (!pl.length || !getTotalDuration()) { video.style.display='none'; endScreen.classList.add('show'); return; }
+        const pos = getLivePosition(); if (!pos) return;
+        if (video.src !== pl[pos.index]) {
+            video.src = pl[pos.index]; video.currentTime = pos.offset; video.loop = false; video.onended = onVideoEnded;
+        } else if (Math.abs(video.currentTime - pos.offset) > 2) video.currentTime = pos.offset;
+        forcePlay();
+        syncInterval = setInterval(() => {
+            if (video.paused && video.style.display !== 'none') forcePlay();
+            const newPos = getLivePosition();
+            if (newPos && newPos.index !== (video.src === pl[newPos.index] ? newPos.index : -1)) {
+                video.src = pl[newPos.index]; video.currentTime = newPos.offset; video.loop = false; video.onended = onVideoEnded;
+                forcePlay();
+            }
+        }, 5000);
     }
 
+    function onVideoEnded() {
+        const pl = getCurrentPlaylist(); if (!pl.length) return;
+        const pos = getLivePosition();
+        if (pos) { video.src = pl[pos.index]; video.currentTime = pos.offset; forcePlay(); }
+    }
+
+    // ========== پنل مدیریت ==========
+    function getAdminPassword() { return currentChannelId ? getChannelData(currentChannelId).password || '' : ''; }
+
+    function openAdminModal() {
+        if (!currentChannelId) return;
+        if (isAdminLoggedIn) renderAdminPanel();
+        else renderLoginForm();
+        adminModal.classList.add('show');
+    }
+
+    function closeAdminModal() { adminModal.classList.remove('show'); isAdminLoggedIn = false; }
+
+    function renderLoginForm() {
+        modalContent.innerHTML = `
+            <h3>🔐 ورود به پنل مدیریت</h3>
+            <p style="margin-bottom:14px;color:var(--text-secondary);font-size:0.9rem;">رمز عبور شبکه را وارد کنید.</p>
+            <input type="password" id="adminPassword" placeholder="رمز عبور">
+            <div class="modal-actions"><button class="btn btn-secondary" onclick="closeAdminModal()">انصراف</button><button class="btn btn-primary" onclick="checkAdminPassword()">ورود</button></div>`;
+        setTimeout(() => document.getElementById('adminPassword')?.focus(), 100);
+    }
+
+    function checkAdminPassword() {
+        if (document.getElementById('adminPassword').value.trim() === getAdminPassword()) {
+            isAdminLoggedIn = true; renderAdminPanel(); showToast('✅ ورود موفقیت‌آمیز');
+        } else showToast('❌ رمز اشتباه است.');
+    }
+
+    function renderAdminPanel() {
+        const ch = getChannelData(currentChannelId);
+        const pl = ch.playlist || [], dur = ch.durations || [];
+        const isPlaying = !video.paused && video.style.display !== 'none';
+        let playlistHtml = pl.map((url,i) => `
+            <div class="playlist-item">
+                <span>${i+1}. ${url.substring(0,50)}… (${dur[i] ? dur[i].toFixed(1) : 'انتخاب نشده'} ثانیه)</span>
+                <div class="move-btns">
+                    <button onclick="movePlaylistItem(${i}, 'up')" ${i===0?'disabled':''}>↑</button>
+                    <button onclick="movePlaylistItem(${i}, 'down')" ${i===pl.length-1?'disabled':''}>↓</button>
+                </div>
+                <button onclick="removeFromPlaylist(${i})">حذف</button>
+            </div>`).join('');
+        modalContent.innerHTML = `
+            <h3>🎛 پنل مدیریت ${ch.name}</h3>
+            <p><span class="status-badge ${isPlaying?'status-live':'status-stopped'}">${isPlaying?'🔴 در حال پخش':'⏸ متوقف'}</span></p>
+            <div class="admin-panel">
+                <label>📝 ویرایش مشخصات</label>
+                <input type="text" id="editName" value="${ch.name}" placeholder="اسم شبکه">
+                <input type="text" id="editDesc" value="${ch.desc}" placeholder="توضیحات">
+                <input type="url" id="editLogo" value="${ch.logo}" placeholder="لینک لوگو">
+                <input type="text" id="editPassword" value="${ch.password}" placeholder="رمز پنل جدید">
+                <button class="btn btn-secondary" onclick="saveChannelInfo()" style="width:100%;margin-bottom:12px;">💾 ذخیره مشخصات</button>
+                <label>➕ افزودن ویدیوی جدید:</label>
+                <input type="url" id="newVideoUrl" placeholder="https://...mp4">
+                <button class="btn btn-primary" onclick="addToPlaylist()" style="width:100%;margin-bottom:12px;">افزودن به لیست پخش</button>
+                <label>📋 لیست پخش (به ترتیب):</label>
+                ${playlistHtml || '<p style="color:var(--text-secondary);">هیچ ویدیویی اضافه نشده است.</p>'}
+                <button class="btn btn-secondary" onclick="applyPlaylistChanges()" style="width:100%;margin-top:12px;">🔄 اعمال تغییرات و شروع پخش</button>
+            </div>
+            <div class="modal-actions" style="margin-top:16px;"><button class="btn btn-secondary" onclick="closeAdminModal()">✕ خروج</button></div>`;
+    }
+
+    function saveChannelInfo() {
+        if (!currentChannelId) return;
+        const ch = channels[currentChannelId];
+        ch.name = document.getElementById('editName').value.trim() || ch.name;
+        ch.desc = document.getElementById('editDesc').value.trim() || ch.desc;
+        ch.logo = document.getElementById('editLogo').value.trim() || ch.logo;
+        const newPass = document.getElementById('editPassword').value.trim();
+        if (newPass) ch.password = newPass;
+        saveChannels();
+        renderAdminPanel();
+        let badgeHtml = '';
+        if (currentChannelId === 'scoregames') {
+            badgeHtml = '<img src="https://cdn.imgurl.ir/uploads/e2588_InShot_20260728_050315092.png" alt="تیک آبی" style="width:22px;height:22px;object-fit:contain;margin-right:6px;">';
+        } else if (currentChannelId === 'toonplus') {
+            badgeHtml = '<svg width="22" height="22" viewBox="0 0 24 24" fill="#22c55e" style="flex-shrink:0;margin-right:6px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>';
+        }
+        document.getElementById('playerChannelTitle').innerHTML = `<img src="${ch.logo}" alt="${ch.name}" style="width:38px;height:38px;border-radius:10px;object-fit:cover;"> ${ch.name} ${badgeHtml}`;
+        showToast('✅ مشخصات ذخیره شد.');
+    }
+
+    function getVideoDuration(url) {
+        return new Promise(resolve => {
+            const v = document.createElement('video');
+            v.preload = 'metadata';
+            v.onloadedmetadata = () => resolve(v.duration || 600);
+            v.onerror = () => resolve(600);
+            v.src = url;
+        });
+    }
+
+    async function addToPlaylist() {
+        const url = document.getElementById('newVideoUrl').value.trim();
+        if (!url) { showToast('⚠️ لینک ویدیو را وارد کنید.'); return; }
+        channels[currentChannelId].playlist.push(url);
+        channels[currentChannelId].durations.push(await getVideoDuration(url));
+        saveChannels(); renderAdminPanel(); showToast('✅ ویدیو اضافه شد.');
+    }
+
+    function removeFromPlaylist(index) {
+        channels[currentChannelId].playlist.splice(index,1);
+        channels[currentChannelId].durations.splice(index,1);
+        saveChannels(); renderAdminPanel();
+    }
+
+    function movePlaylistItem(index, direction) {
+        const pl = channels[currentChannelId].playlist;
+        const dur = channels[currentChannelId].durations;
+        if (direction === 'up' && index > 0) {
+            [pl[index], pl[index-1]] = [pl[index-1], pl[index]];
+            [dur[index], dur[index-1]] = [dur[index-1], dur[index]];
+        } else if (direction === 'down' && index < pl.length-1) {
+            [pl[index], pl[index+1]] = [pl[index+1], pl[index]];
+            [dur[index], dur[index+1]] = [dur[index+1], dur[index]];
+        }
+        saveChannels();
+        renderAdminPanel();
+    }
+
+    function applyPlaylistChanges() {
+        saveChannels();
+        if (document.getElementById('playerSection').classList.contains('active')) syncToLivePoint();
+        closeAdminModal(); showToast('✅ لیست پخش به‌روز شد.');
+    }
+
+    adminLockBtn.addEventListener('click', e => { e.stopPropagation(); openAdminModal(); });
+    adminModal.addEventListener('click', e => { if (e.target === adminModal) closeAdminModal(); });
+
+    // ========== تمام‌صفحه ==========
     async function toggleFullscreen() {
         if (!document.fullscreenElement && !video.webkitDisplayingFullscreen) {
-            if (video.paused) video.play().catch(() => {});
-            if (video.webkitEnterFullscreen) {
-                video.webkitEnterFullscreen();
-                onFullscreenEnter();
-                return;
-            }
-            if (video.requestFullscreen) {
-                try { await video.requestFullscreen(); onFullscreenEnter(); } catch (e) {}
-                return;
-            }
+            if (video.paused) video.play().catch(()=>{});
+            if (video.webkitEnterFullscreen) { video.webkitEnterFullscreen(); onFullscreenEnter(); return; }
+            if (video.requestFullscreen) { try { await video.requestFullscreen(); onFullscreenEnter(); } catch(e) {} return; }
+        } else exitFullscreen();
+    }
+    function exitFullscreen() { if (document.exitFullscreen) document.exitFullscreen().catch(()=>{}); else if (video.webkitExitFullscreen) video.webkitExitFullscreen(); onFullscreenExit(); }
+    function onFullscreenEnter() { try { screen.orientation?.lock('landscape'); } catch(e) {} fullscreenBtn.style.display = 'none'; }
+    function onFullscreenExit() { try { screen.orientation?.unlock(); } catch(e) {} fullscreenBtn.style.display = 'flex'; }
+
+    fullscreenBtn.addEventListener('click', toggleFullscreen);
+    document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && !video.webkitDisplayingFullscreen) onFullscreenExit(); });
+    video.addEventListener('webkitendfullscreen', onFullscreenExit);
+    video.addEventListener('dblclick', e => { e.preventDefault(); toggleFullscreen(); });
+    video.removeAttribute('controls');
+    video.addEventListener('contextmenu', e => e.preventDefault());
+
+    // ========== توابع کپی ==========
+    function copyToClipboard(text, buttonId, successMessage) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(() => {
+                onCopySuccess(buttonId, successMessage);
+            }).catch(() => {
+                fallbackCopyText(text, buttonId, successMessage);
+            });
         } else {
-            exitFullscreen();
+            fallbackCopyText(text, buttonId, successMessage);
         }
     }
 
-    function exitFullscreen() {
-        if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
-        else if (video.webkitExitFullscreen) video.webkitExitFullscreen();
-        onFullscreenExit();
+    function fallbackCopyText(text, buttonId, successMessage) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        try {
+            const successful = document.execCommand('copy');
+            if (successful) {
+                onCopySuccess(buttonId, successMessage);
+            } else {
+                showToast('⚠️ کپی انجام نشد. لطفاً دستی کپی کنید.');
+            }
+        } catch (err) {
+            showToast('⚠️ کپی انجام نشد. لطفاً دستی کپی کنید.');
+        }
+        document.body.removeChild(textarea);
     }
 
-    function onFullscreenEnter() {
-        try { if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape'); } catch (e) {}
-        fullscreenBtn.style.display = 'none';
+    function onCopySuccess(buttonId, message) {
+        const btn = document.getElementById(buttonId);
+        if (btn) {
+            const originalText = btn.textContent;
+            btn.textContent = '✅ کپی شد!';
+            btn.classList.add('copied');
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.classList.remove('copied');
+            }, 2000);
+        }
+        showToast(message);
     }
-
-    function onFullscreenExit() {
-        try { if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); } catch (e) {}
-        fullscreenBtn.style.display = 'flex';
-    }
-
-    fullscreenBtn.addEventListener('click', toggleFullscreen);
-    document.addEventListener('fullscreenchange', () => {
-        if (!document.fullscreenElement && !video.webkitDisplayingFullscreen) onFullscreenExit();
-    });
-    video.addEventListener('webkitendfullscreen', onFullscreenExit);
-
-    video.addEventListener('click', e => e.preventDefault());
-    video.addEventListener('dblclick', e => { e.preventDefault(); toggleFullscreen(); });
-    video.addEventListener('pause', () => { if (!video.ended && video.src) video.play().catch(() => {}); });
-    video.removeAttribute('controls');
-    video.addEventListener('contextmenu', e => e.preventDefault());
 
     function copyFormContent() {
         const name = document.getElementById('networkName').value.trim() || '(وارد نشده)';
         const desc = document.getElementById('networkDesc').value.trim() || '(وارد نشده)';
         const logo = document.getElementById('networkLogo').value.trim() || '(وارد نشده)';
         const freq = document.getElementById('networkFrequency').value.trim() || '(وارد نشده)';
-
-        const text = `📝 درخواست ساخت شبکه
-━━━━━━━━━━━━━━━
-📌 اسم شبکه: ${name}
-📄 توضیحات: ${desc}
-🖼 لینک لوگو: ${logo}
-⏱ فاصله آپلود: ${freq}
-━━━━━━━━━━━━━━━
-📱 ارسال به روبیکا: @BikaralafJP`;
-
-        navigator.clipboard.writeText(text).then(() => {
-            const btn = document.getElementById('copyFormBtn');
-            btn.textContent = '✅ کپی شد!';
-            btn.classList.add('copied');
-            setTimeout(() => {
-                btn.textContent = '📋 کپی کل فرم';
-                btn.classList.remove('copied');
-            }, 2000);
-        }).catch(() => showToast('⚠️ کپی انجام نشد. لطفاً دستی کپی کنید.'));
+        const pass = document.getElementById('networkPassword').value.trim() || '(وارد نشده)';
+        const text = `📝 درخواست ساخت شبکه\n━━━━━━━━━━━━━━━\n📌 اسم شبکه: ${name}\n📄 توضیحات: ${desc}\n🖼 لینک لوگو: ${logo}\n⏱ فاصله آپلود: ${freq}\n🔐 رمز پنل: ${pass}\n━━━━━━━━━━━━━━━\n📱 ارسال به روبیکا: @BikaralafJP`;
+        copyToClipboard(text, 'copyFormBtn', '📋 فرم کپی شد.');
     }
 
     function copyRubikaID() {
-        navigator.clipboard.writeText('@BikaralafJP').then(() => {
-            const btn = document.getElementById('copyRubikaBtn');
-            btn.textContent = '✅ کپی شد!';
-            btn.classList.add('copied');
-            setTimeout(() => {
-                btn.textContent = '📱 کپی آیدی @BikaralafJP';
-                btn.classList.remove('copied');
-            }, 2000);
-        }).catch(() => showToast('⚠️ کپی انجام نشد.'));
+        copyToClipboard('@BikaralafJP', 'copyRubikaBtn', '📱 آیدی روبیکا کپی شد.');
     }
 
-    let toastTimer;
     function showToast(msg) {
-        const toast = document.getElementById('toast');
-        toast.textContent = msg;
-        toast.classList.add('show');
-        clearTimeout(toastTimer);
-        toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+        const t = document.getElementById('toast');
+        t.textContent = msg; t.classList.add('show');
+        clearTimeout(window.toastTimer);
+        window.toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
     }
 
     window.addEventListener('load', () => {
-        video.load();
-        video.loop = true;
+        video.loop = false;
+        fab.style.display = 'flex';
+        updateMuteButton();
     });
 </script>
 </body>
