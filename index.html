@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>تلوزیونر - شبکه‌ها</title>
+    <title>تلوژیونر - شبکه‌ها</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/samim-font@v4.0.5/dist/font-face.css">
     <style>
         :root {
@@ -82,7 +82,6 @@
 
         .admin-lock-btn { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.6); color: #fff; border: none; width: 38px; height: 38px; border-radius: 50%; font-size: 18px; cursor: pointer; z-index: 20; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
 
-        /* دکمه مدیریت صدا */
         .mute-toggle-btn {
             position: absolute; bottom: 12px; right: 12px;
             background: rgba(0,0,0,0.65); color: #fff; border: none;
@@ -147,7 +146,6 @@
         .fab:hover { transform: scale(1.08); }
         .fab:active { transform: scale(0.95); }
 
-        /* استایل مودال روبیکا */
         .rubika-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.35s ease, visibility 0.35s ease; }
         .rubika-modal.show { opacity: 1; visibility: visible; }
         .rubika-dialog { background: #fff; border-radius: 24px; padding: 32px 24px; width: 90%; max-width: 420px; box-shadow: 0 25px 70px rgba(0,0,0,0.4); text-align: center; position: relative; animation: rubikaPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
@@ -177,7 +175,6 @@
 </head>
 <body>
 
-<!-- مودال خوش‌آمدگویی روبیکا -->
 <div class="rubika-modal show" id="rubikaModal">
     <div class="rubika-dialog">
         <button class="rubika-close" onclick="closeRubikaModal()">✕</button>
@@ -206,8 +203,8 @@
 
 <header class="header">
     <div class="logo" onclick="goHome()">
-        <img src="https://cdn.imgurl.ir/uploads/i378724_file_0000000070ac820aa0e4e908875695f0.png" alt="تلوزیونر">
-        <span class="brand-name">تلوزیونر</span>
+        <img src="https://cdn.imgurl.ir/uploads/i378724_file_0000000070ac820aa0e4e908875695f0.png" alt="تلوژیونر">
+        <span class="brand-name">تلوژیونر</span>
     </div>
     <button class="hamburger" onclick="openSidebar()" aria-label="منو"><span></span><span></span><span></span></button>
 </header>
@@ -237,6 +234,16 @@
                 </div>
                 <div class="channel-desc">برنامه کودک</div>
             </div>
+            <div class="channel-card" data-channel="sedanima" onclick="openChannel('sedanima')">
+                <img class="channel-logo" src="https://cdn.imgurl.ir/uploads/e865313_InShot_20260730_155407253.jpg" alt="صدای نیما">
+                <div class="channel-name">صدای نیما</div>
+                <div class="channel-desc">شبکه رسمی صدای نیما</div>
+            </div>
+            <div class="channel-card" data-channel="pooya" onclick="openChannel('pooya')">
+                <img class="channel-logo" src="https://cdn.imgurl.ir/uploads/j83767_Screenshot___Samsung_Browser.jpg" alt="Pooya">
+                <div class="channel-name">Pooya</div>
+                <div class="channel-desc">شبکه پویا سیما، پخش زنده شبکه پویا سیما،آرشیو برنامه های شبکه پویا. ... شبکه پویا. جستجو. صفحه اصلی · برنامه ها · آلبوم فیلم</div>
+            </div>
         </div>
     </section>
 
@@ -246,7 +253,6 @@
 
         <div class="player-wrapper" id="playerWrapper">
             <button class="admin-lock-btn" id="adminLockBtn" title="پنل مدیریت پخش زنده">🔒</button>
-            <!-- دکمه مدیریت صدا -->
             <button class="mute-toggle-btn" id="muteToggleBtn" title="فعال/غیرفعال کردن صدا">🔇</button>
             <video id="mainVideo" autoplay playsinline preload="auto"
                    poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='450'%3E%3Crect fill='%23000' width='800' height='450'/%3E%3Ctext fill='%23fff' font-size='36' font-weight='bold' x='50%25' y='50%25' text-anchor='middle' dy='.1em' font-family='sans-serif'%3E📺%3C/text%3E%3C/svg%3E"
@@ -268,7 +274,7 @@
         <button class="back-btn" onclick="goHome()">← بازگشت به صفحه اصلی</button>
         <h2 class="section-title">قوانین</h2>
         <div class="content-card">
-            <p>📜 لطفاً قوانین زیر را برای استفاده از تلوزیونر رعایت فرمایید:</p>
+            <p>📜 لطفاً قوانین زیر را برای استفاده از تلوژیونر رعایت فرمایید:</p>
             <ul class="rules-list"><li>گزاشتن محتوا درست</li><li>اسمی درست برای شبکه خود</li><li>پاسخگو</li></ul>
             <p style="margin-top: 16px; color: var(--text-secondary);">⚡ رعایت این موارد باعث می‌شود تجربه بهتری برای همه کاربران فراهم شود.</p>
         </div>
@@ -300,31 +306,41 @@
 <div class="modal" id="adminModal"><div class="modal-box" id="modalContent"></div></div>
 <div class="toast" id="toast"></div>
 
+<!-- تابع بستن مودال روبیکا -->
+<script>
+  function closeRubikaModal() {
+    document.getElementById('rubikaModal').classList.remove('show');
+    localStorage.setItem('rubika_modal_closed', 'true');
+  }
+  document.getElementById('rubikaModal').addEventListener('click', function(e) {
+    if (e.target === this) closeRubikaModal();
+  });
+</script>
+
+<!-- Goftino چت آنلاین -->
 <script type="text/javascript">
   !function(){var i="jb8b5f",d=document,g=d.createElement("script"),s="https://www.goftino.com/widget/"+i,l=localStorage.getItem("goftino_"+i);g.type="text/javascript",g.async=!0,g.src=l?s+"?o="+l:s;d.getElementsByTagName("head")[0].appendChild(g);}();
 </script>
 
-<script>
-    // ========== مودال روبیکا ==========
-    function closeRubikaModal() {
-        document.getElementById('rubikaModal').classList.remove('show');
-        localStorage.setItem('rubika_modal_closed', 'true');
-    }
+<!-- Firebase و منطق اصلی -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-    window.addEventListener('load', function() {
-        const modalClosed = localStorage.getItem('rubika_modal_closed');
-        if (!modalClosed) {
-            setTimeout(() => {
-                document.getElementById('rubikaModal').classList.add('show');
-            }, 800);
-        }
-    });
+    const firebaseConfig = {
+        apiKey: "AIzaSyARQAF3iCs-gm3Bi3BogHe4nUwYalkgV-I",
+        authDomain: "telozioner.firebaseapp.com",
+        databaseURL: "https://telozioner-default-rtdb.firebaseio.com",
+        projectId: "telozioner",
+        storageBucket: "telozioner.firebasestorage.app",
+        messagingSenderId: "737863759537",
+        appId: "1:737863759537:web:2528b2d13e56a713925490"
+    };
 
-    document.getElementById('rubikaModal').addEventListener('click', function(e) {
-        if (e.target === this) closeRubikaModal();
-    });
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const CHANNELS_REF = ref(db, 'channels');
 
-    // ========== اطلاعات اولیه شبکه‌ها ==========
     const DEFAULT_CHANNELS = {
         scoregames: {
             name: 'ScoreGames',
@@ -332,7 +348,8 @@
             logo: 'https://cdn.imgurl.ir/uploads/n147901_IMG_20260708_023235_176.jpg',
             password: 'Pohl5468@',
             playlist: [],
-            durations: []
+            durations: [],
+            names: []
         },
         toonplus: {
             name: 'TOON+',
@@ -340,22 +357,35 @@
             logo: 'https://cdn.imgurl.ir/uploads/m7236_file_0000000022d081f5a74f63c6b6840b99.png',
             password: 'TOONTOON',
             playlist: [],
-            durations: []
+            durations: [],
+            names: []
+        },
+        sedanima: {
+            name: 'صدای نیما',
+            desc: 'شبکه رسمی صدای نیما',
+            logo: 'https://cdn.imgurl.ir/uploads/e865313_InShot_20260730_155407253.jpg',
+            password: '1020',
+            playlist: [],
+            durations: [],
+            names: []
+        },
+        pooya: {
+            name: 'Pooya',
+            desc: 'شبکه پویا سیما، پخش زنده شبکه پویا سیما،آرشیو برنامه های شبکه پویا. ... شبکه پویا. جستجو. صفحه اصلی · برنامه ها · آلبوم فیلم',
+            logo: 'https://cdn.imgurl.ir/uploads/j83767_Screenshot___Samsung_Browser.jpg',
+            password: 'H123456789',
+            playlist: [],
+            durations: [],
+            names: []
         }
     };
 
-    let channels = JSON.parse(localStorage.getItem('televizioner_channels'));
-    if (!channels || Object.keys(channels).length === 0) {
-        channels = DEFAULT_CHANNELS;
-        localStorage.setItem('televizioner_channels', JSON.stringify(channels));
-    } else {
-        for (const [key, value] of Object.entries(DEFAULT_CHANNELS)) {
-            if (!channels[key]) channels[key] = value;
-        }
-        localStorage.setItem('televizioner_channels', JSON.stringify(channels));
-    }
-
+    let channels = {};
     let currentChannelId = null;
+    let isAdminLoggedIn = false;
+    let syncInterval = null;
+    const MIDNIGHT = new Date(); MIDNIGHT.setHours(0,0,0,0);
+
     const wrapper = document.getElementById('playerWrapper');
     const video = document.getElementById('mainVideo');
     const endScreen = document.getElementById('endScreen');
@@ -369,11 +399,6 @@
     const muteToggleBtn = document.getElementById('muteToggleBtn');
     const fab = document.getElementById('fab');
 
-    let isAdminLoggedIn = false;
-    let syncInterval = null;
-    const MIDNIGHT = new Date(); MIDNIGHT.setHours(0,0,0,0);
-
-    // مدیریت حالت صدا
     function updateMuteButton() {
         if (video.muted) {
             muteToggleBtn.textContent = '🔇';
@@ -383,26 +408,48 @@
             muteToggleBtn.title = 'صدا فعال است – برای قطع کردن کلیک کنید';
         }
     }
-
     muteToggleBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         video.muted = !video.muted;
         updateMuteButton();
-        // تلاش برای پخش در صورت قطع
         if (video.paused) video.play().catch(()=>{});
         showToast(video.muted ? '🔇 صدا قطع شد' : '🔊 صدا فعال شد');
     });
-
     video.addEventListener('volumechange', updateMuteButton);
-    // اولویت با muted خود video
     video.addEventListener('loadedmetadata', updateMuteButton);
-    video.addEventListener('play', () => {
-        // اگر مرورگر خودش mute کرده باشد، دکمه را به‌روز می‌کنیم
-        updateMuteButton();
-    });
+    video.addEventListener('play', () => { updateMuteButton(); });
 
-    function saveChannels() { localStorage.setItem('televizioner_channels', JSON.stringify(channels)); }
+    async function saveChannels() {
+        try {
+            await set(CHANNELS_REF, channels);
+            localStorage.setItem('televizioner_channels', JSON.stringify(channels));
+        } catch (error) {
+            console.error("خطا در ذخیره‌سازی:", error);
+            showToast("⚠️ خطا در ذخیره‌سازی آنلاین. از کش استفاده می‌شود.");
+            localStorage.setItem('televizioner_channels', JSON.stringify(channels));
+        }
+    }
+
     function getChannelData(channelId) { return channels[channelId] || {}; }
+
+    function initFirebaseSync() {
+        onValue(CHANNELS_REF, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                channels = data;
+            } else {
+                channels = DEFAULT_CHANNELS;
+                set(CHANNELS_REF, DEFAULT_CHANNELS);
+            }
+            localStorage.setItem('televizioner_channels', JSON.stringify(channels));
+            if (currentChannelId) {
+                syncToLivePoint();
+            }
+            if (adminModal.classList.contains('show') && isAdminLoggedIn) {
+                renderAdminPanel();
+            }
+        });
+    }
 
     function openSidebar() { sidebar.classList.add('show'); overlay.classList.add('show'); }
     function closeSidebar() { sidebar.classList.remove('show'); overlay.classList.remove('show'); }
@@ -449,6 +496,7 @@
         } else if (channelId === 'toonplus') {
             badgeHtml = '<svg width="22" height="22" viewBox="0 0 24 24" fill="#22c55e" style="flex-shrink:0;margin-right:6px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>';
         }
+        // برای صدای نیما تیک سبز حذف شده
         document.getElementById('playerChannelTitle').innerHTML = `<img src="${ch.logo}" alt="${ch.name}" style="width:38px;height:38px;border-radius:10px;object-fit:cover;"> ${ch.name} ${badgeHtml}`;
         endScreenLogo.src = ch.logo;
         syncToLivePoint();
@@ -456,7 +504,33 @@
         updateMuteButton();
     }
 
-    function showPlaylist() { showToast('📋 برای دیدن لیست پخش، وارد پنل مدیریت شوید.'); }
+    function showPlaylist() {
+        if (!currentChannelId) { showToast('⚠️ ابتدا یک شبکه را انتخاب کنید.'); return; }
+        renderUserPlaylistModal();
+        adminModal.classList.add('show');
+    }
+
+    function renderUserPlaylistModal() {
+        const ch = getChannelData(currentChannelId);
+        const names = ch.names || [];
+        const dur = ch.durations || [];
+        let listHtml = '';
+        if (names.length) {
+            listHtml = names.map((name, i) => `
+                <div class="playlist-item" style="background:#fff; justify-content:space-between; cursor:default;">
+                    <span style="flex:2;">${i+1}. ${name}</span>
+                    <span style="font-size:0.8rem; color:#6c757d; flex:0 0 auto; margin-right:8px;">⏱ ${dur[i] ? dur[i].toFixed(1) : '?'} ثانیه</span>
+                </div>
+            `).join('');
+        } else {
+            listHtml = '<p style="color:var(--text-secondary); text-align:center; padding:20px;">هیچ ویدیویی در لیست پخش وجود ندارد.</p>';
+        }
+        modalContent.innerHTML = `
+            <h3>📋 لیست پخش ${ch.name}</h3>
+            <div style="max-height:60vh; overflow-y:auto; margin-bottom:16px;">${listHtml}</div>
+            <div class="modal-actions"><button class="btn btn-secondary" onclick="closeAdminModal()">بستن</button></div>
+        `;
+    }
 
     function filterChannels() {
         const query = document.getElementById('searchInput').value.trim().toLowerCase();
@@ -467,7 +541,6 @@
         });
     }
 
-    // ========== پخش زنده ==========
     function getCurrentPlaylist() { return currentChannelId ? getChannelData(currentChannelId).playlist || [] : []; }
     function getCurrentDurations() { return currentChannelId ? getChannelData(currentChannelId).durations || [] : []; }
     function getTotalDuration() { return getCurrentDurations().reduce((s,d)=>s+d,0); }
@@ -486,9 +559,7 @@
 
     function forcePlay() {
         if (video.paused) {
-            // تلاش برای پخش بدون تغییر اجباری muted (مرورگر تصمیم می‌گیرد)
             video.play().catch(() => {
-                // اگر مرورگر reject کرد، با muted=true تلاش کن
                 video.muted = true;
                 updateMuteButton();
                 video.play().catch(()=>{});
@@ -522,7 +593,6 @@
         if (pos) { video.src = pl[pos.index]; video.currentTime = pos.offset; forcePlay(); }
     }
 
-    // ========== پنل مدیریت ==========
     function getAdminPassword() { return currentChannelId ? getChannelData(currentChannelId).password || '' : ''; }
 
     function openAdminModal() {
@@ -549,19 +619,34 @@
         } else showToast('❌ رمز اشتباه است.');
     }
 
+    function editVideoName(index) {
+        const ch = channels[currentChannelId];
+        const currentName = ch.names[index] || '';
+        const newName = prompt('نام جدید برای این ویدیو:', currentName);
+        if (newName !== null) {
+            ch.names[index] = newName.trim() || `ویدیو ${index+1}`;
+            saveChannels();
+            renderAdminPanel();
+        }
+    }
+
     function renderAdminPanel() {
         const ch = getChannelData(currentChannelId);
-        const pl = ch.playlist || [], dur = ch.durations || [];
+        const pl = ch.playlist || [], dur = ch.durations || [], names = ch.names || [];
         const isPlaying = !video.paused && video.style.display !== 'none';
-        let playlistHtml = pl.map((url,i) => `
+        let playlistHtml = pl.map((url,i) => {
+            const name = names[i] || `ویدیو ${i+1}`;
+            return `
             <div class="playlist-item">
-                <span>${i+1}. ${url.substring(0,50)}… (${dur[i] ? dur[i].toFixed(1) : 'انتخاب نشده'} ثانیه)</span>
+                <span>${i+1}. <strong>${name}</strong> <small style="color:#6c757d;">(${url.substring(0,35)}…)</small> (${dur[i] ? dur[i].toFixed(1) : '?'} ثانیه)</span>
+                <button onclick="editVideoName(${i})" style="background:#ffc107;border:none;color:#000;padding:2px 6px;border-radius:4px;font-size:0.75rem;margin-right:4px;" title="ویرایش نام">✏️</button>
                 <div class="move-btns">
                     <button onclick="movePlaylistItem(${i}, 'up')" ${i===0?'disabled':''}>↑</button>
                     <button onclick="movePlaylistItem(${i}, 'down')" ${i===pl.length-1?'disabled':''}>↓</button>
                 </div>
                 <button onclick="removeFromPlaylist(${i})">حذف</button>
-            </div>`).join('');
+            </div>`;
+        }).join('');
         modalContent.innerHTML = `
             <h3>🎛 پنل مدیریت ${ch.name}</h3>
             <p><span class="status-badge ${isPlaying?'status-live':'status-stopped'}">${isPlaying?'🔴 در حال پخش':'⏸ متوقف'}</span></p>
@@ -573,6 +658,7 @@
                 <input type="text" id="editPassword" value="${ch.password}" placeholder="رمز پنل جدید">
                 <button class="btn btn-secondary" onclick="saveChannelInfo()" style="width:100%;margin-bottom:12px;">💾 ذخیره مشخصات</button>
                 <label>➕ افزودن ویدیوی جدید:</label>
+                <input type="text" id="newVideoName" placeholder="نام ویدیو (مثلاً: قسمت اول)">
                 <input type="url" id="newVideoUrl" placeholder="https://...mp4">
                 <button class="btn btn-primary" onclick="addToPlaylist()" style="width:100%;margin-bottom:12px;">افزودن به لیست پخش</button>
                 <label>📋 لیست پخش (به ترتیب):</label>
@@ -598,6 +684,7 @@
         } else if (currentChannelId === 'toonplus') {
             badgeHtml = '<svg width="22" height="22" viewBox="0 0 24 24" fill="#22c55e" style="flex-shrink:0;margin-right:6px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>';
         }
+        // برای صدای نیما تیک سبز حذف شده
         document.getElementById('playerChannelTitle').innerHTML = `<img src="${ch.logo}" alt="${ch.name}" style="width:38px;height:38px;border-radius:10px;object-fit:cover;"> ${ch.name} ${badgeHtml}`;
         showToast('✅ مشخصات ذخیره شد.');
     }
@@ -613,28 +700,40 @@
     }
 
     async function addToPlaylist() {
-        const url = document.getElementById('newVideoUrl').value.trim();
+        const nameInput = document.getElementById('newVideoName');
+        const urlInput = document.getElementById('newVideoUrl');
+        const url = urlInput.value.trim();
         if (!url) { showToast('⚠️ لینک ویدیو را وارد کنید.'); return; }
+        let name = nameInput.value.trim();
+        if (!name) name = `ویدیو ${channels[currentChannelId].playlist.length + 1}`;
         channels[currentChannelId].playlist.push(url);
         channels[currentChannelId].durations.push(await getVideoDuration(url));
-        saveChannels(); renderAdminPanel(); showToast('✅ ویدیو اضافه شد.');
+        channels[currentChannelId].names.push(name);
+        saveChannels();
+        renderAdminPanel();
+        showToast('✅ ویدیو اضافه شد.');
     }
 
     function removeFromPlaylist(index) {
         channels[currentChannelId].playlist.splice(index,1);
         channels[currentChannelId].durations.splice(index,1);
-        saveChannels(); renderAdminPanel();
+        channels[currentChannelId].names.splice(index,1);
+        saveChannels();
+        renderAdminPanel();
     }
 
     function movePlaylistItem(index, direction) {
         const pl = channels[currentChannelId].playlist;
         const dur = channels[currentChannelId].durations;
+        const names = channels[currentChannelId].names;
         if (direction === 'up' && index > 0) {
             [pl[index], pl[index-1]] = [pl[index-1], pl[index]];
             [dur[index], dur[index-1]] = [dur[index-1], dur[index]];
+            [names[index], names[index-1]] = [names[index-1], names[index]];
         } else if (direction === 'down' && index < pl.length-1) {
             [pl[index], pl[index+1]] = [pl[index+1], pl[index]];
             [dur[index], dur[index+1]] = [dur[index+1], dur[index]];
+            [names[index], names[index+1]] = [names[index+1], names[index]];
         }
         saveChannels();
         renderAdminPanel();
@@ -643,13 +742,13 @@
     function applyPlaylistChanges() {
         saveChannels();
         if (document.getElementById('playerSection').classList.contains('active')) syncToLivePoint();
-        closeAdminModal(); showToast('✅ لیست پخش به‌روز شد.');
+        closeAdminModal();
+        showToast('✅ لیست پخش به‌روز شد.');
     }
 
     adminLockBtn.addEventListener('click', e => { e.stopPropagation(); openAdminModal(); });
     adminModal.addEventListener('click', e => { if (e.target === adminModal) closeAdminModal(); });
 
-    // ========== تمام‌صفحه ==========
     async function toggleFullscreen() {
         if (!document.fullscreenElement && !video.webkitDisplayingFullscreen) {
             if (video.paused) video.play().catch(()=>{});
@@ -668,17 +767,11 @@
     video.removeAttribute('controls');
     video.addEventListener('contextmenu', e => e.preventDefault());
 
-    // ========== توابع کپی ==========
     function copyToClipboard(text, buttonId, successMessage) {
         if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(text).then(() => {
-                onCopySuccess(buttonId, successMessage);
-            }).catch(() => {
-                fallbackCopyText(text, buttonId, successMessage);
-            });
-        } else {
-            fallbackCopyText(text, buttonId, successMessage);
-        }
+            navigator.clipboard.writeText(text).then(() => onCopySuccess(buttonId, successMessage))
+            .catch(() => fallbackCopyText(text, buttonId, successMessage));
+        } else fallbackCopyText(text, buttonId, successMessage);
     }
 
     function fallbackCopyText(text, buttonId, successMessage) {
@@ -690,15 +783,9 @@
         textarea.focus();
         textarea.select();
         try {
-            const successful = document.execCommand('copy');
-            if (successful) {
-                onCopySuccess(buttonId, successMessage);
-            } else {
-                showToast('⚠️ کپی انجام نشد. لطفاً دستی کپی کنید.');
-            }
-        } catch (err) {
-            showToast('⚠️ کپی انجام نشد. لطفاً دستی کپی کنید.');
-        }
+            if (document.execCommand('copy')) onCopySuccess(buttonId, successMessage);
+            else showToast('⚠️ کپی انجام نشد. لطفاً دستی کپی کنید.');
+        } catch (err) { showToast('⚠️ کپی انجام نشد. لطفاً دستی کپی کنید.'); }
         document.body.removeChild(textarea);
     }
 
@@ -708,15 +795,12 @@
             const originalText = btn.textContent;
             btn.textContent = '✅ کپی شد!';
             btn.classList.add('copied');
-            setTimeout(() => {
-                btn.textContent = originalText;
-                btn.classList.remove('copied');
-            }, 2000);
+            setTimeout(() => { btn.textContent = originalText; btn.classList.remove('copied'); }, 2000);
         }
         showToast(message);
     }
 
-    function copyFormContent() {
+    window.copyFormContent = function() {
         const name = document.getElementById('networkName').value.trim() || '(وارد نشده)';
         const desc = document.getElementById('networkDesc').value.trim() || '(وارد نشده)';
         const logo = document.getElementById('networkLogo').value.trim() || '(وارد نشده)';
@@ -724,11 +808,11 @@
         const pass = document.getElementById('networkPassword').value.trim() || '(وارد نشده)';
         const text = `📝 درخواست ساخت شبکه\n━━━━━━━━━━━━━━━\n📌 اسم شبکه: ${name}\n📄 توضیحات: ${desc}\n🖼 لینک لوگو: ${logo}\n⏱ فاصله آپلود: ${freq}\n🔐 رمز پنل: ${pass}\n━━━━━━━━━━━━━━━\n📱 ارسال به روبیکا: @BikaralafJP`;
         copyToClipboard(text, 'copyFormBtn', '📋 فرم کپی شد.');
-    }
+    };
 
-    function copyRubikaID() {
+    window.copyRubikaID = function() {
         copyToClipboard('@BikaralafJP', 'copyRubikaBtn', '📱 آیدی روبیکا کپی شد.');
-    }
+    };
 
     function showToast(msg) {
         const t = document.getElementById('toast');
@@ -741,7 +825,34 @@
         video.loop = false;
         fab.style.display = 'flex';
         updateMuteButton();
+        initFirebaseSync();
+        const modalClosed = localStorage.getItem('rubika_modal_closed');
+        if (!modalClosed) {
+            setTimeout(() => document.getElementById('rubikaModal').classList.add('show'), 800);
+        }
     });
+
+    // فقط توابع ضروری برای پنل مدیریت در معرض دید global قرار می‌گیرند
+    window.openAdminModal = openAdminModal;
+    window.closeAdminModal = closeAdminModal;
+    window.checkAdminPassword = checkAdminPassword;
+    window.renderAdminPanel = renderAdminPanel;
+    window.saveChannelInfo = saveChannelInfo;
+    window.addToPlaylist = addToPlaylist;
+    // توابع زیر دیگر به صورت سراسری در دسترس نیستند (اما همچنان در ماژول قابل استفاده هستند)
+    // window.removeFromPlaylist = removeFromPlaylist;
+    // window.movePlaylistItem = movePlaylistItem;
+    // window.applyPlaylistChanges = applyPlaylistChanges;
+    // window.editVideoName = editVideoName;
+    // window.showPlaylist = showPlaylist;
+    // window.filterChannels = filterChannels;
+    // window.openChannel = openChannel;
+    // window.goHome = goHome;
+    // window.navigateTo = navigateTo;
+    // window.openSidebar = openSidebar;
+    // window.closeSidebar = closeSidebar;
+    // window.openSupportChat = openSupportChat;
+    // window.toggleFullscreen = toggleFullscreen;
 </script>
 </body>
-</html>
+            </html>
