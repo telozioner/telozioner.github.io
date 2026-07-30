@@ -266,7 +266,7 @@
 
         <div class="player-actions">
             <button class="btn btn-secondary" onclick="showPlaylist()">📋 لیست پخش‌ها</button>
-            <button class="btn btn-secondary" id="fullscreenBtn">⛶ تمام‌صفحه</button>
+            <button class="btn btn-secondary" id="fullscreenBtn" onclick="toggleFullscreen()">⛶ تمام‌صفحه</button>
         </div>
     </section>
 
@@ -832,27 +832,26 @@
         }
     });
 
-    // فقط توابع ضروری برای پنل مدیریت در معرض دید global قرار می‌گیرند
+    // قرار دادن تمام توابع ضروری در window برای دسترسی از onclickها
     window.openAdminModal = openAdminModal;
     window.closeAdminModal = closeAdminModal;
     window.checkAdminPassword = checkAdminPassword;
     window.renderAdminPanel = renderAdminPanel;
     window.saveChannelInfo = saveChannelInfo;
     window.addToPlaylist = addToPlaylist;
-    // توابع زیر دیگر به صورت سراسری در دسترس نیستند (اما همچنان در ماژول قابل استفاده هستند)
-    // window.removeFromPlaylist = removeFromPlaylist;
-    // window.movePlaylistItem = movePlaylistItem;
-    // window.applyPlaylistChanges = applyPlaylistChanges;
-    // window.editVideoName = editVideoName;
-    // window.showPlaylist = showPlaylist;
-    // window.filterChannels = filterChannels;
-    // window.openChannel = openChannel;
-    // window.goHome = goHome;
-    // window.navigateTo = navigateTo;
-    // window.openSidebar = openSidebar;
-    // window.closeSidebar = closeSidebar;
-    // window.openSupportChat = openSupportChat;
-    // window.toggleFullscreen = toggleFullscreen;
+    window.removeFromPlaylist = removeFromPlaylist;
+    window.movePlaylistItem = movePlaylistItem;
+    window.applyPlaylistChanges = applyPlaylistChanges;
+    window.editVideoName = editVideoName;
+    window.showPlaylist = showPlaylist;
+    window.filterChannels = filterChannels;
+    window.openChannel = openChannel;
+    window.goHome = goHome;
+    window.navigateTo = navigateTo;
+    window.openSidebar = openSidebar;
+    window.closeSidebar = closeSidebar;
+    window.openSupportChat = openSupportChat;
+    window.toggleFullscreen = toggleFullscreen;
 </script>
 </body>
-            </html>
+    </html>
