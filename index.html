@@ -287,13 +287,11 @@
         filmcinema: { name: 'فیلم سینمایی', desc: 'فیلم سینمایی های دیدنی بروز قدیمی و جدید دوبله', logo: 'https://cdn.imgurl.ir/uploads/g7203_file_00000000602481f4861093dc9e4e8baf.png', password: '13131343', likes: 0, playlist: [], durations: [], names: [] }
     };
 
-    // بارگذاری اولیه channels با داده‌های پیش‌فرض، سپس تلاش برای خواندن از localStorage
     let channels = JSON.parse(JSON.stringify(DEFAULT_CHANNELS));
     try {
         const saved = localStorage.getItem('televizioner_channels');
         if (saved) {
             const parsed = JSON.parse(saved);
-            // ادغام با پیش‌فرض‌ها (در صورت وجود کلیدهای بیشتر در localStorage)
             channels = Object.assign(JSON.parse(JSON.stringify(DEFAULT_CHANNELS)), parsed);
         }
     } catch(e) {}
@@ -333,51 +331,28 @@
         return null;
     }
 
-    // ---------- مدیریت علاقه‌مندی‌ها ----------
     function getFavorites() {
         try { return JSON.parse(localStorage.getItem('tv_favorites')) || []; } catch(e) { return []; }
     }
     function saveFavorites(favs) { localStorage.setItem('tv_favorites', JSON.stringify(favs)); }
 
     async function toggleFavorite(channelId) {
-        const userId = getUserId();
         const favs = getFavorites();
         const alreadyLiked = favs.includes(channelId);
-
-        if (alreadyLiked) {
-            favs.splice(favs.indexOf(channelId), 1);
-        } else {
-            favs.push(channelId);
-        }
+        if (alreadyLiked) favs.splice(favs.indexOf(channelId), 1);
+        else favs.push(channelId);
         saveFavorites(favs);
-
-        if (channels[channelId]) {
-            channels[channelId].likes = (channels[channelId].likes || 0) + (alreadyLiked ? -1 : 1);
-        } else if (DEFAULT_CHANNELS[channelId]) {
-            channels[channelId] = JSON.parse(JSON.stringify(DEFAULT_CHANNELS[channelId]));
-            channels[channelId].likes = (alreadyLiked ? 0 : 1);
-        }
+        if (channels[channelId]) channels[channelId].likes = (channels[channelId].likes || 0) + (alreadyLiked ? -1 : 1);
         renderChannelCards();
-
         const channelRef = CHANNELS_REF.child(channelId).child('likes');
         try {
             await channelRef.transaction((currentLikes) => {
-                if (currentLikes === null) {
-                    return alreadyLiked ? 0 : 1;
-                }
-                return alreadyLiked ? currentLikes - 1 : currentLikes + 1;
+                return (currentLikes || 0) + (alreadyLiked ? -1 : 1);
             });
         } catch (error) {
-            console.error('Transaction failed:', error);
-            if (alreadyLiked) {
-                favs.push(channelId);
-            } else {
-                favs.splice(favs.indexOf(channelId), 1);
-            }
+            if (alreadyLiked) favs.push(channelId); else favs.splice(favs.indexOf(channelId), 1);
             saveFavorites(favs);
-            if (channels[channelId]) {
-                channels[channelId].likes = (channels[channelId].likes || 0) + (alreadyLiked ? 1 : -1);
-            }
+            if (channels[channelId]) channels[channelId].likes = (channels[channelId].likes || 0) + (alreadyLiked ? 1 : -1);
             renderChannelCards();
             showToast('❌ خطا در به‌روزرسانی لایک');
         }
@@ -388,8 +363,7 @@
     let showFavoritesOnly = false;
     function toggleFavFilter() {
         showFavoritesOnly = !showFavoritesOnly;
-        const btn = document.getElementById('favFilterBtn');
-        if (showFavoritesOnly) btn.classList.add('active'); else btn.classList.remove('active');
+        document.getElementById('favFilterBtn').classList.toggle('active', showFavoritesOnly);
         filterChannels();
     }
 
@@ -464,14 +438,35 @@
     function showSection(id) { document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); fab.style.display = (id === 'homeSection') ? 'flex' : 'none'; }
     function goHome() { stopPlaybackAndMute(); currentChannelId = null; isAdminLoggedIn = false; showSection('homeSection'); document.getElementById('searchInput').value = ''; filterChannels(); }
 
-    function openChannel(channelId) {
-        const ch = getChannelData(channelId); if (!ch) { showToast('⚠️ اطلاعات شبکه یافت نشد.'); return; }
+    // اصلاحیه: دریافت مستقیم از Firebase هنگام ورود به کانال
+    async function openChannel(channelId) {
+        try {
+            const snap = await CHANNELS_REF.child(channelId).once('value');
+            if (snap.exists()) {
+                const fbData = snap.val();
+                // به‌روزرسانی channels با آخرین داده‌های Firebase
+                channels[channelId] = fbData;
+                // اطمینان از وجود فیلدهای ضروری
+                if (!channels[channelId].playlist) channels[channelId].playlist = [];
+                if (!channels[channelId].durations) channels[channelId].durations = [];
+                if (!channels[channelId].names) channels[channelId].names = [];
+                if (channels[channelId].likes === undefined) channels[channelId].likes = 0;
+            }
+        } catch(e) {
+            console.error('خطا در دریافت داده‌های کانال:', e);
+        }
+
+        const ch = getChannelData(channelId);
+        if (!ch) { showToast('⚠️ اطلاعات شبکه یافت نشد.'); return; }
         currentChannelId = channelId; isAdminLoggedIn = false;
         let badgeHtml = '';
         if (channelId === 'scoregames') badgeHtml = '<img src="https://cdn.imgurl.ir/uploads/e2588_InShot_20260728_050315092.png" style="width:22px;height:22px;object-fit:contain;margin-right:6px;">';
         else if (channelId === 'toonplus') badgeHtml = '<svg width="22" height="22" viewBox="0 0 24 24" fill="#22c55e" style="flex-shrink:0;margin-right:6px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>';
         document.getElementById('playerChannelTitle').innerHTML = `<img src="${ch.logo}" style="width:38px;height:38px;border-radius:10px;object-fit:cover;"> ${ch.name} ${badgeHtml}`;
-        endScreenLogo.src = ch.logo; syncToLivePoint(); showSection('playerSection'); updateMuteButton();
+        endScreenLogo.src = ch.logo;
+        syncToLivePoint();
+        showSection('playerSection');
+        updateMuteButton();
     }
 
     function getCurrentPlaylist() { return currentChannelId ? (channels[currentChannelId]?.playlist || []) : []; }
@@ -514,10 +509,34 @@
         modalContent.innerHTML = `<h3>🎛 مدیریت ${ch.name}</h3><p><span class="status-badge ${isPlaying?'status-live':'status-stopped'}">${isPlaying?'🔴 در حال پخش':'⏸ متوقف'}</span></p><div class="admin-panel"><label>📝 مشخصات</label><input id="editName" value="${ch.name}"><input id="editDesc" value="${ch.desc}"><input id="editLogo" value="${ch.logo}"><input id="editPassword" value="${ch.password}"><button class="btn btn-secondary" onclick="saveChannelInfo()" style="width:100%;margin-bottom:12px;">💾 ذخیره</button><label>➕ ویدیوی جدید</label><input id="newVideoName" placeholder="نام ویدیو"><input type="url" id="newVideoUrl" placeholder="لینک MP4"><button class="btn btn-primary" onclick="addToPlaylist()" style="width:100%;margin-bottom:12px;">افزودن</button><label>📋 لیست پخش</label>${listHtml || '<p style="color:var(--text-secondary);">خالی</p>'}<button class="btn btn-secondary" onclick="applyPlaylistChanges()" style="width:100%;margin-top:12px;">🔄 اعمال تغییرات</button></div><div class="modal-actions" style="margin-top:16px;"><button class="btn btn-secondary" onclick="closeAdminModal()">✕ خروج</button></div>`;
     }
     function saveChannelInfo() { const ch = getChannelData(currentChannelId); if (!ch) return; ch.name = document.getElementById('editName').value.trim() || ch.name; ch.desc = document.getElementById('editDesc').value.trim() || ch.desc; ch.logo = document.getElementById('editLogo').value.trim() || ch.logo; const p = document.getElementById('editPassword').value.trim(); if (p) ch.password = p; channels[currentChannelId] = ch; CHANNELS_REF.child(currentChannelId).set(ch); renderAdminPanel(); showToast('✅ ذخیره شد'); }
-    function addToPlaylist() { const urlInp = document.getElementById('newVideoUrl'); const url = urlInp.value.trim(); if (!url) { showToast('⚠️ لینک را وارد کنید'); return; } let name = document.getElementById('newVideoName').value.trim() || `ویدیو ${Date.now()}`; const ch = getChannelData(currentChannelId); if (!ch) return; if (!ch.playlist) ch.playlist = []; if (!ch.durations) ch.durations = []; if (!ch.names) ch.names = []; ch.playlist.push(url); getVideoDuration(url, (duration) => { ch.durations.push(duration); ch.names.push(name); channels[currentChannelId] = ch; CHANNELS_REF.child(currentChannelId).set(ch); renderAdminPanel(); showToast('✅ ویدیو اضافه شد'); }); }
-    function removeFromPlaylist(index) { const ch = getChannelData(currentChannelId); if (!ch) return; ch.playlist.splice(index,1); ch.durations.splice(index,1); ch.names.splice(index,1); channels[currentChannelId] = ch; CHANNELS_REF.child(currentChannelId).set(ch); renderAdminPanel(); }
-    function movePlaylistItem(index, dir) { const ch = getChannelData(currentChannelId); if (!ch) return; if (dir==='up' && index>0) { [ch.playlist[index], ch.playlist[index-1]] = [ch.playlist[index-1], ch.playlist[index]]; [ch.durations[index], ch.durations[index-1]] = [ch.durations[index-1], ch.durations[index]]; [ch.names[index], ch.names[index-1]] = [ch.names[index-1], ch.names[index]]; } else if (dir==='down' && index<ch.playlist.length-1) { [ch.playlist[index], ch.playlist[index+1]] = [ch.playlist[index+1], ch.playlist[index]]; [ch.durations[index], ch.durations[index+1]] = [ch.durations[index+1], ch.durations[index]]; [ch.names[index], ch.names[index+1]] = [ch.names[index+1], ch.names[index]]; } channels[currentChannelId] = ch; CHANNELS_REF.child(currentChannelId).set(ch); renderAdminPanel(); }
-    function editVideoName(index) { const ch = getChannelData(currentChannelId); if (!ch) return; const cur = ch.names[index] || ''; const newName = prompt('نام جدید:', cur); if (newName !== null) { ch.names[index] = newName.trim() || `ویدیو ${index+1}`; channels[currentChannelId] = ch; CHANNELS_REF.child(currentChannelId).set(ch); renderAdminPanel(); } }
+    function addToPlaylist() {
+        const urlInp = document.getElementById('newVideoUrl');
+        const url = urlInp.value.trim();
+        if (!url) { showToast('⚠️ لینک را وارد کنید'); return; }
+        let name = document.getElementById('newVideoName').value.trim() || `ویدیو ${Date.now()}`;
+        const ch = getChannelData(currentChannelId);
+        if (!ch) return;
+        if (!ch.playlist) ch.playlist = [];
+        if (!ch.durations) ch.durations = [];
+        if (!ch.names) ch.names = [];
+        ch.playlist.push(url);
+        getVideoDuration(url, (duration) => {
+            ch.durations.push(duration);
+            ch.names.push(name);
+            channels[currentChannelId] = ch;
+            // استفاده از update برای جلوگیری از بازنویسی likes
+            const updates = {};
+            updates['playlist'] = ch.playlist;
+            updates['durations'] = ch.durations;
+            updates['names'] = ch.names;
+            CHANNELS_REF.child(currentChannelId).update(updates);
+            renderAdminPanel();
+            showToast('✅ ویدیو اضافه شد');
+        });
+    }
+    function removeFromPlaylist(index) { const ch = getChannelData(currentChannelId); if (!ch) return; ch.playlist.splice(index,1); ch.durations.splice(index,1); ch.names.splice(index,1); channels[currentChannelId] = ch; const updates = { playlist: ch.playlist, durations: ch.durations, names: ch.names }; CHANNELS_REF.child(currentChannelId).update(updates); renderAdminPanel(); }
+    function movePlaylistItem(index, dir) { const ch = getChannelData(currentChannelId); if (!ch) return; if (dir==='up' && index>0) { [ch.playlist[index], ch.playlist[index-1]] = [ch.playlist[index-1], ch.playlist[index]]; [ch.durations[index], ch.durations[index-1]] = [ch.durations[index-1], ch.durations[index]]; [ch.names[index], ch.names[index-1]] = [ch.names[index-1], ch.names[index]]; } else if (dir==='down' && index<ch.playlist.length-1) { [ch.playlist[index], ch.playlist[index+1]] = [ch.playlist[index+1], ch.playlist[index]]; [ch.durations[index], ch.durations[index+1]] = [ch.durations[index+1], ch.durations[index]]; [ch.names[index], ch.names[index+1]] = [ch.names[index+1], ch.names[index]]; } channels[currentChannelId] = ch; const updates = { playlist: ch.playlist, durations: ch.durations, names: ch.names }; CHANNELS_REF.child(currentChannelId).update(updates); renderAdminPanel(); }
+    function editVideoName(index) { const ch = getChannelData(currentChannelId); if (!ch) return; const cur = ch.names[index] || ''; const newName = prompt('نام جدید:', cur); if (newName !== null) { ch.names[index] = newName.trim() || `ویدیو ${index+1}`; channels[currentChannelId] = ch; const updates = { names: ch.names }; CHANNELS_REF.child(currentChannelId).update(updates); renderAdminPanel(); } }
     function applyPlaylistChanges() { closeAdminModal(); showToast('✅ اعمال شد'); }
     function getVideoDuration(url, callback) { const v = document.createElement('video'); v.preload = 'metadata'; v.onloadedmetadata = () => callback(v.duration || 600); v.onerror = () => callback(600); v.src = url; }
     function showPlaylist() { if (!currentChannelId) return; const ch = getChannelData(currentChannelId); if (!ch) return; const names = ch.names || [], dur = ch.durations || []; let html = names.length ? names.map((n,i) => `<div class="playlist-item"><span>${i+1}. ${n}</span><span>⏱ ${dur[i]?.toFixed(1)||'?'}s</span></div>`).join('') : '<p style="color:var(--text-secondary);">خالی</p>'; modalContent.innerHTML = `<h3>📋 لیست پخش ${ch.name}</h3><div style="max-height:60vh;overflow-y:auto;">${html}</div><div class="modal-actions"><button class="btn btn-secondary" onclick="closeAdminModal()">بستن</button></div>`; adminModal.classList.add('show'); }
@@ -539,7 +558,6 @@
     function renderGlobalAdminPanel() { let html = ''; for (const [id, ch] of Object.entries(channels)) { html += `<div class="admin-global-item"><div class="info"><strong>${ch.name}</strong><span>${ch.desc}</span><span style="display:block;font-size:0.75rem;color:#888;">🔑 ${ch.password}</span></div><button onclick="deleteChannelGlobal('${id}')">🗑 حذف</button></div>`; } modalContent.innerHTML = `<h3>🛡️ مدیریت شبکه‌ها</h3><div style="max-height:60vh;overflow-y:auto;margin-bottom:16px;">${html || '<p>شبکه‌ای وجود ندارد.</p>'}</div><div class="modal-actions"><button class="btn btn-secondary" onclick="closeAdminModal()">خروج</button></div>`; }
     async function deleteChannelGlobal(channelId) { if (!confirm(`آیا مطمئن هستید که می‌خواهید شبکه "${channels[channelId]?.name}" را حذف کنید؟`)) return; try { await CHANNELS_REF.child(channelId).remove(); const snap = await USER_CHANNELS_REF.once('value'); const userChannels = snap.val() || {}; for (const [uid, cid] of Object.entries(userChannels)) { if (cid === channelId) await USER_CHANNELS_REF.child(uid).remove(); } delete channels[channelId]; localStorage.setItem('televizioner_channels', JSON.stringify(channels)); renderGlobalAdminPanel(); renderChannelCards(); showToast('🗑 شبکه حذف شد'); } catch(e) { showToast('❌ خطا در حذف شبکه'); console.error(e); } }
 
-    // توابع کپی
     function fallbackCopy(text) {
         const textarea = document.createElement("textarea");
         textarea.value = text;
@@ -565,12 +583,10 @@
         else { if (fallbackCopy(text)) showToast('📱 کپی شد'); else showToast('❌ کپی انجام نشد'); }
     };
 
-    // ========== اشتراک‌گذاری لینک شبکه (درست‌شده) ==========
     function shareChannelLink() {
         if (!currentChannelId) return;
         const baseUrl = window.location.origin + window.location.pathname;
         const url = `${baseUrl}?channel=${currentChannelId}`;
-
         if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(url).then(() => showToast('🔗 لینک کپی شد'));
         } else {
@@ -586,12 +602,11 @@
 
     window.addEventListener('load', () => {
         video.loop = false; fab.style.display = 'flex'; updateMuteButton();
-        renderChannelCards(); // حالا channels از قبل با ۵ کانال پر شده است
-        initFirebaseSync();   // همگام‌سازی با Firebase و به‌روزرسانی
+        renderChannelCards();
+        initFirebaseSync();
         if (!localStorage.getItem('rubika_modal_closed')) setTimeout(() => document.getElementById('rubikaModal').classList.add('show'), 800);
         document.getElementById('adminLockBtn').addEventListener('click', openAdminModal);
 
-        // پشتیبانی از لینک مستقیم
         const urlParams = new URLSearchParams(window.location.search);
         const channelParam = urlParams.get('channel');
         if (channelParam && DEFAULT_CHANNELS[channelParam]) {
