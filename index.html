@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -7,266 +8,270 @@
 
     <!-- css -->
     <link rel="stylesheet" href="asstes/css/style.css">
-
-    <!-- js -->
-    <script src="asstes/js/script.js"></script>
 </head>
+
 <body>
 
-<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
-<div class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-        <span>منو</span>
-        <button class="close-btn" onclick="closeSidebar()">✕</button>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span>منو</span>
+            <button class="close-btn" onclick="closeSidebar()">✕</button>
+        </div>
+        <button class="menu-item" onclick="navigateTo('home')">📺 شبکه‌ها</button>
+        <button class="menu-item" onclick="openSupportChat()">🎧 پشتیبانی</button>
+        <button class="menu-item" onclick="navigateTo('create')">➕ ساخت شبکه</button>
+        <button class="menu-item" onclick="navigateTo('rules')">⚖️ قوانین</button>
     </div>
-    <button class="menu-item" onclick="navigateTo('home')">📺 شبکه‌ها</button>
-    <button class="menu-item" onclick="openSupportChat()">🎧 پشتیبانی</button>
-    <button class="menu-item" onclick="navigateTo('create')">➕ ساخت شبکه</button>
-    <button class="menu-item" onclick="navigateTo('rules')">⚖️ قوانین</button>
-</div>
 
-<header class="header">
-    <div class="logo" onclick="goHome()">
-        <img src="https://cdn.imgurl.ir/uploads/i378724_file_0000000070ac820aa0e4e908875695f0.png" alt="تلوزیونر">
-        <span>تلوزیونر</span>
-    </div>
-    <button class="hamburger" onclick="openSidebar()" aria-label="منو">
-        <span></span><span></span><span></span>
-    </button>
-</header>
+    <header class="header">
+        <div class="logo" onclick="goHome()">
+            <img src="https://cdn.imgurl.ir/uploads/i378724_file_0000000070ac820aa0e4e908875695f0.png" alt="تلوزیونر">
+            <span>تلوزیونر</span>
+        </div>
+        <button class="hamburger" onclick="openSidebar()" aria-label="منو">
+            <span></span><span></span><span></span>
+        </button>
+    </header>
 
-<main class="main-container">
+    <main class="main-container">
 
-    <section id="homeSection" class="section active">
-        <h2 class="section-title">شبکه‌های تلویزیونی</h2>
-        <div class="channels-grid">
-            <div class="channel-card" onclick="openChannel('scoregames')">
-                <img class="channel-logo" src="https://cdn.imgurl.ir/uploads/n147901_IMG_20260708_023235_176.jpg" alt="ScoreGames">
-                <div class="channel-name">
-                    ScoreGames
-                    <img src="https://cdn.imgurl.ir/uploads/e2588_InShot_20260728_050315092.png" alt="تیک آبی" class="verified-badge">
+        <section id="homeSection" class="section active">
+            <h2 class="section-title">شبکه‌های تلویزیونی</h2>
+            <div class="channels-grid">
+                <div class="channel-card" onclick="openChannel('scoregames')">
+                    <img class="channel-logo" src="https://cdn.imgurl.ir/uploads/n147901_IMG_20260708_023235_176.jpg"
+                        alt="ScoreGames">
+                    <div class="channel-name">
+                        ScoreGames
+                        <img src="https://cdn.imgurl.ir/uploads/e2588_InShot_20260728_050315092.png" alt="تیک آبی"
+                            class="verified-badge">
+                    </div>
+                    <div class="channel-desc">شبکه تخصصی بازی‌ها و امتیازات - پخش پیوسته</div>
                 </div>
-                <div class="channel-desc">شبکه تخصصی بازی‌ها و امتیازات - پخش پیوسته</div>
+                <div class="empty-channels">🚀 شبکه‌های بیشتر به‌زودی اضافه می‌شوند...</div>
             </div>
-            <div class="empty-channels">🚀 شبکه‌های بیشتر به‌زودی اضافه می‌شوند...</div>
-        </div>
-    </section>
+        </section>
 
-    <section id="playerSection" class="section player-page">
-        <button class="back-btn" onclick="goHome()">← بازگشت به لیست شبکه‌ها</button>
-        <h2 class="section-title" id="playerChannelTitle">
-            <img src="https://cdn.imgurl.ir/uploads/n147901_IMG_20260708_023235_176.jpg" alt="ScoreGames" style="width:38px; height:38px; border-radius:10px; object-fit:cover;">
-            ScoreGames
-            <img src="https://cdn.imgurl.ir/uploads/e2588_InShot_20260728_050315092.png" alt="تیک آبی" class="verified-badge" style="width:30px; height:30px;">
-        </h2>
+        <section id="playerSection" class="section player-page">
+            <button class="back-btn" onclick="goHome()">← بازگشت به لیست شبکه‌ها</button>
+            <h2 class="section-title" id="playerChannelTitle">
+                <img src="https://cdn.imgurl.ir/uploads/n147901_IMG_20260708_023235_176.jpg" alt="ScoreGames"
+                    style="width:38px; height:38px; border-radius:10px; object-fit:cover;">
+                ScoreGames
+                <img src="https://cdn.imgurl.ir/uploads/e2588_InShot_20260728_050315092.png" alt="تیک آبی"
+                    class="verified-badge" style="width:30px; height:30px;">
+            </h2>
 
-        <div class="player-wrapper" id="playerWrapper">
-            <video id="mainVideo"
-                   src="https://cdn.imgurl.ir/uploads/u80121_kwp6vkv-360-1785196403001.mp4"
-                   loop autoplay muted playsinline preload="auto"
-                   poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='450'%3E%3Crect fill='%23f8f9fa' width='800' height='450'/%3E%3Ctext fill='%23e94560' font-size='36' font-weight='bold' x='50%25' y='50%25' text-anchor='middle' dy='.1em' font-family='sans-serif'%3E🎮 ScoreGames%3C/text%3E%3C/svg%3E"
-                   oncontextmenu="return false;"></video>
-        </div>
-
-        <div class="player-actions">
-            <button class="btn btn-secondary" onclick="showPlaylist()">📋 لیست پخش‌ها</button>
-            <button class="btn btn-secondary" id="fullscreenBtn">⛶ تمام‌صفحه</button>
-        </div>
-    </section>
-
-    <section id="rulesSection" class="section">
-        <button class="back-btn" onclick="goHome()">← بازگشت به صفحه اصلی</button>
-        <h2 class="section-title">قوانین</h2>
-        <div class="content-card">
-            <p>📜 لطفاً قوانین زیر را برای استفاده از تلوزیونر رعایت فرمایید:</p>
-            <ul class="rules-list">
-                <li>گزاشتن محتوا درست</li>
-                <li>اسمی درست برای شبکه خود</li>
-                <li>پاسخگو</li>
-            </ul>
-            <p style="margin-top: 16px; color: var(--text-secondary);">⚡ رعایت این موارد باعث می‌شود تجربه بهتری برای همه کاربران فراهم شود.</p>
-        </div>
-    </section>
-
-    <section id="createSection" class="section">
-        <button class="back-btn" onclick="goHome()">← بازگشت به صفحه اصلی</button>
-        <h2 class="section-title">ساخت شبکه</h2>
-
-        <div class="content-card" style="margin-bottom: 20px;">
-            <p>📜 <strong>ابتدا قوانین را مطالعه کنید:</strong></p>
-            <ul class="rules-list">
-                <li>گزاشتن محتوا درست</li>
-                <li>اسمی درست برای شبکه خود</li>
-                <li>پاسخگو</li>
-            </ul>
-        </div>
-
-        <div class="content-card" id="formContainer">
-            <p style="font-weight: 700; margin-bottom: 20px;">📝 فرم درخواست شبکه</p>
-            <div class="form-group">
-                <label>اسم شبکه:</label>
-                <input type="text" id="networkName" placeholder="نام شبکه خود را وارد کنید">
-            </div>
-            <div class="form-group">
-                <label>توضیحات:</label>
-                <textarea id="networkDesc" placeholder="توضیحاتی درباره شبکه خود بنویسید"></textarea>
-            </div>
-            <div class="form-group">
-                <label>لینک دائمی لوگو شبکه:</label>
-                <input type="url" id="networkLogo" placeholder="https://example.com/logo.png">
-            </div>
-            <div class="form-group">
-                <label>هر چند وقت یک بار می‌آیید و فیلم اضافه می‌کنید:</label>
-                <input type="text" id="networkFrequency" placeholder="مثلاً: روزانه، هفتگی">
+            <div class="player-wrapper" id="playerWrapper">
+                <video id="mainVideo" src="https://cdn.imgurl.ir/uploads/u80121_kwp6vkv-360-1785196403001.mp4" loop
+                    autoplay muted playsinline preload="auto"
+                    poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='450'%3E%3Crect fill='%23f8f9fa' width='800' height='450'/%3E%3Ctext fill='%23e94560' font-size='36' font-weight='bold' x='50%25' y='50%25' text-anchor='middle' dy='.1em' font-family='sans-serif'%3E🎮 ScoreGames%3C/text%3E%3C/svg%3E"
+                    oncontextmenu="return false;"></video>
             </div>
 
-            <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 12px;">
-                <button class="btn-copy" id="copyFormBtn" onclick="copyFormContent()">📋 کپی کل فرم</button>
-                <span style="font-weight: 600; color: var(--text-secondary); margin: 0 8px;">سپس در روبیکا ارسال کنید:</span>
-                <button class="btn-copy" id="copyRubikaBtn" onclick="copyRubikaID()" style="background: #8b5cf6;">📱 کپی آیدی @BikaralafJP</button>
+            <div class="player-actions">
+                <button class="btn btn-secondary" onclick="showPlaylist()">📋 لیست پخش‌ها</button>
+                <button class="btn btn-secondary" id="fullscreenBtn">⛶ تمام‌صفحه</button>
             </div>
-        </div>
-    </section>
+        </section>
 
-</main>
+        <section id="rulesSection" class="section">
+            <button class="back-btn" onclick="goHome()">← بازگشت به صفحه اصلی</button>
+            <h2 class="section-title">قوانین</h2>
+            <div class="content-card">
+                <p>📜 لطفاً قوانین زیر را برای استفاده از تلوزیونر رعایت فرمایید:</p>
+                <ul class="rules-list">
+                    <li>گزاشتن محتوا درست</li>
+                    <li>اسمی درست برای شبکه خود</li>
+                    <li>پاسخگو</li>
+                </ul>
+                <p style="margin-top: 16px; color: var(--text-secondary);">⚡ رعایت این موارد باعث می‌شود تجربه بهتری
+                    برای همه کاربران فراهم شود.</p>
+            </div>
+        </section>
 
-<div class="toast" id="toast"></div>
+        <section id="createSection" class="section">
+            <button class="back-btn" onclick="goHome()">← بازگشت به صفحه اصلی</button>
+            <h2 class="section-title">ساخت شبکه</h2>
 
-<!-- اسکریپت گوفتینو -->
-<script type="text/javascript">
-  !function(){var i="jb8b5f",d=document,g=d.createElement("script"),s="https://www.goftino.com/widget/"+i,l=localStorage.getItem("goftino_"+i);g.type="text/javascript",g.async=!0,g.src=l?s+"?o="+l:s;d.getElementsByTagName("head")[0].appendChild(g);}();
-</script>
+            <div class="content-card" style="margin-bottom: 20px;">
+                <p>📜 <strong>ابتدا قوانین را مطالعه کنید:</strong></p>
+                <ul class="rules-list">
+                    <li>گزاشتن محتوا درست</li>
+                    <li>اسمی درست برای شبکه خود</li>
+                    <li>پاسخگو</li>
+                </ul>
+            </div>
 
-<script>
-    const wrapper = document.getElementById('playerWrapper');
-    const video = document.getElementById('mainVideo');
-    const fullscreenBtn = document.getElementById('fullscreenBtn');
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('overlay');
+            <div class="content-card" id="formContainer">
+                <p style="font-weight: 700; margin-bottom: 20px;">📝 فرم درخواست شبکه</p>
+                <div class="form-group">
+                    <label>اسم شبکه:</label>
+                    <input type="text" id="networkName" placeholder="نام شبکه خود را وارد کنید">
+                </div>
+                <div class="form-group">
+                    <label>توضیحات:</label>
+                    <textarea id="networkDesc" placeholder="توضیحاتی درباره شبکه خود بنویسید"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>لینک دائمی لوگو شبکه:</label>
+                    <input type="url" id="networkLogo" placeholder="https://example.com/logo.png">
+                </div>
+                <div class="form-group">
+                    <label>هر چند وقت یک بار می‌آیید و فیلم اضافه می‌کنید:</label>
+                    <input type="text" id="networkFrequency" placeholder="مثلاً: روزانه، هفتگی">
+                </div>
 
-    function openSidebar() {
-        sidebar.classList.add('show');
-        overlay.classList.add('show');
-    }
+                <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 12px;">
+                    <button class="btn-copy" id="copyFormBtn" onclick="copyFormContent()">📋 کپی کل فرم</button>
+                    <span style="font-weight: 600; color: var(--text-secondary); margin: 0 8px;">سپس در روبیکا ارسال
+                        کنید:</span>
+                    <button class="btn-copy" id="copyRubikaBtn" onclick="copyRubikaID()" style="background: #8b5cf6;">📱
+                        کپی آیدی @BikaralafJP</button>
+                </div>
+            </div>
+        </section>
 
-    function closeSidebar() {
-        sidebar.classList.remove('show');
-        overlay.classList.remove('show');
-    }
+    </main>
 
-    function navigateTo(page) {
-        closeSidebar();
-        if (page === 'home') goHome();
-        else if (page === 'rules') {
+    <div class="toast" id="toast"></div>
+
+    <!-- اسکریپت گوفتینو -->
+    <script type="text/javascript">
+        !function () { var i = "jb8b5f", d = document, g = d.createElement("script"), s = "https://www.goftino.com/widget/" + i, l = localStorage.getItem("goftino_" + i); g.type = "text/javascript", g.async = !0, g.src = l ? s + "?o=" + l : s; d.getElementsByTagName("head")[0].appendChild(g); }();
+    </script>
+
+    <script>
+        const wrapper = document.getElementById('playerWrapper');
+        const video = document.getElementById('mainVideo');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+
+        function openSidebar() {
+            sidebar.classList.add('show');
+            overlay.classList.add('show');
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('show');
+            overlay.classList.remove('show');
+        }
+
+        function navigateTo(page) {
+            closeSidebar();
+            if (page === 'home') goHome();
+            else if (page === 'rules') {
+                if (video && !video.paused) video.pause();
+                if (document.fullscreenElement || video.webkitDisplayingFullscreen) exitFullscreen();
+                showSection('rulesSection');
+            } else if (page === 'create') {
+                if (video && !video.paused) video.pause();
+                if (document.fullscreenElement || video.webkitDisplayingFullscreen) exitFullscreen();
+                showSection('createSection');
+            }
+        }
+
+        function openSupportChat() {
+            closeSidebar();
+            // تلاش برای باز کردن ویجت گوفتینو
+            if (typeof Goftino !== 'undefined' && Goftino.open) {
+                Goftino.open();
+            } else {
+                // اگر هنوز بارگذاری نشده، صبر می‌کنیم
+                setTimeout(() => {
+                    if (typeof Goftino !== 'undefined' && Goftino.open) {
+                        Goftino.open();
+                    } else {
+                        showToast('⚠️ پشتیبانی آنلاین در حال بارگذاری است، لطفاً چند لحظه دیگر امتحان کنید.');
+                    }
+                }, 1500);
+            }
+        }
+
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function goHome() {
+            showSection('homeSection');
             if (video && !video.paused) video.pause();
             if (document.fullscreenElement || video.webkitDisplayingFullscreen) exitFullscreen();
-            showSection('rulesSection');
-        } else if (page === 'create') {
-            if (video && !video.paused) video.pause();
-            if (document.fullscreenElement || video.webkitDisplayingFullscreen) exitFullscreen();
-            showSection('createSection');
         }
-    }
 
-    function openSupportChat() {
-        closeSidebar();
-        // تلاش برای باز کردن ویجت گوفتینو
-        if (typeof Goftino !== 'undefined' && Goftino.open) {
-            Goftino.open();
-        } else {
-            // اگر هنوز بارگذاری نشده، صبر می‌کنیم
-            setTimeout(() => {
-                if (typeof Goftino !== 'undefined' && Goftino.open) {
-                    Goftino.open();
-                } else {
-                    showToast('⚠️ پشتیبانی آنلاین در حال بارگذاری است، لطفاً چند لحظه دیگر امتحان کنید.');
-                }
-            }, 1500);
-        }
-    }
-
-    function showSection(id) {
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-    }
-
-    function goHome() {
-        showSection('homeSection');
-        if (video && !video.paused) video.pause();
-        if (document.fullscreenElement || video.webkitDisplayingFullscreen) exitFullscreen();
-    }
-
-    function openChannel(name) {
-        if (name === 'scoregames') {
-            showSection('playerSection');
-            document.getElementById('playerChannelTitle').innerHTML = `
+        function openChannel(name) {
+            if (name === 'scoregames') {
+                showSection('playerSection');
+                document.getElementById('playerChannelTitle').innerHTML = `
                 <img src="https://cdn.imgurl.ir/uploads/n147901_IMG_20260708_023235_176.jpg" alt="ScoreGames" style="width:38px; height:38px; border-radius:10px; object-fit:cover;">
                 ScoreGames
                 <img src="https://cdn.imgurl.ir/uploads/e2588_InShot_20260728_050315092.png" alt="تیک آبی" class="verified-badge" style="width:30px; height:30px;">
             `;
-            video.currentTime = 0;
-            video.muted = true;
-            video.play().catch(() => {});
-        }
-    }
-
-    function showPlaylist() {
-        showToast('📋 فعلاً هیچ لیست پخشی برای شبکه ScoreGames وجود ندارد.');
-    }
-
-    async function toggleFullscreen() {
-        if (!document.fullscreenElement && !video.webkitDisplayingFullscreen) {
-            if (video.paused) video.play().catch(() => {});
-            if (video.webkitEnterFullscreen) {
-                video.webkitEnterFullscreen();
-                onFullscreenEnter();
-                return;
+                video.currentTime = 0;
+                video.muted = true;
+                video.play().catch(() => { });
             }
-            if (video.requestFullscreen) {
-                try { await video.requestFullscreen(); onFullscreenEnter(); } catch (e) {}
-                return;
-            }
-        } else {
-            exitFullscreen();
         }
-    }
 
-    function exitFullscreen() {
-        if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
-        else if (video.webkitExitFullscreen) video.webkitExitFullscreen();
-        onFullscreenExit();
-    }
+        function showPlaylist() {
+            showToast('📋 فعلاً هیچ لیست پخشی برای شبکه ScoreGames وجود ندارد.');
+        }
 
-    function onFullscreenEnter() {
-        try { if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape'); } catch (e) {}
-        fullscreenBtn.style.display = 'none';
-    }
+        async function toggleFullscreen() {
+            if (!document.fullscreenElement && !video.webkitDisplayingFullscreen) {
+                if (video.paused) video.play().catch(() => { });
+                if (video.webkitEnterFullscreen) {
+                    video.webkitEnterFullscreen();
+                    onFullscreenEnter();
+                    return;
+                }
+                if (video.requestFullscreen) {
+                    try { await video.requestFullscreen(); onFullscreenEnter(); } catch (e) { }
+                    return;
+                }
+            } else {
+                exitFullscreen();
+            }
+        }
 
-    function onFullscreenExit() {
-        try { if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); } catch (e) {}
-        fullscreenBtn.style.display = 'flex';
-    }
+        function exitFullscreen() {
+            if (document.exitFullscreen) document.exitFullscreen().catch(() => { });
+            else if (video.webkitExitFullscreen) video.webkitExitFullscreen();
+            onFullscreenExit();
+        }
 
-    fullscreenBtn.addEventListener('click', toggleFullscreen);
-    document.addEventListener('fullscreenchange', () => {
-        if (!document.fullscreenElement && !video.webkitDisplayingFullscreen) onFullscreenExit();
-    });
-    video.addEventListener('webkitendfullscreen', onFullscreenExit);
+        function onFullscreenEnter() {
+            try { if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape'); } catch (e) { }
+            fullscreenBtn.style.display = 'none';
+        }
 
-    video.addEventListener('click', e => e.preventDefault());
-    video.addEventListener('dblclick', e => { e.preventDefault(); toggleFullscreen(); });
-    video.addEventListener('pause', () => { if (!video.ended && video.src) video.play().catch(() => {}); });
-    video.removeAttribute('controls');
-    video.addEventListener('contextmenu', e => e.preventDefault());
+        function onFullscreenExit() {
+            try { if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); } catch (e) { }
+            fullscreenBtn.style.display = 'flex';
+        }
 
-    function copyFormContent() {
-        const name = document.getElementById('networkName').value.trim() || '(وارد نشده)';
-        const desc = document.getElementById('networkDesc').value.trim() || '(وارد نشده)';
-        const logo = document.getElementById('networkLogo').value.trim() || '(وارد نشده)';
-        const freq = document.getElementById('networkFrequency').value.trim() || '(وارد نشده)';
+        fullscreenBtn.addEventListener('click', toggleFullscreen);
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement && !video.webkitDisplayingFullscreen) onFullscreenExit();
+        });
+        video.addEventListener('webkitendfullscreen', onFullscreenExit);
 
-        const text = `📝 درخواست ساخت شبکه
+        video.addEventListener('click', e => e.preventDefault());
+        video.addEventListener('dblclick', e => { e.preventDefault(); toggleFullscreen(); });
+        video.addEventListener('pause', () => { if (!video.ended && video.src) video.play().catch(() => { }); });
+        video.removeAttribute('controls');
+        video.addEventListener('contextmenu', e => e.preventDefault());
+
+        function copyFormContent() {
+            const name = document.getElementById('networkName').value.trim() || '(وارد نشده)';
+            const desc = document.getElementById('networkDesc').value.trim() || '(وارد نشده)';
+            const logo = document.getElementById('networkLogo').value.trim() || '(وارد نشده)';
+            const freq = document.getElementById('networkFrequency').value.trim() || '(وارد نشده)';
+
+            const text = `📝 درخواست ساخت شبکه
 ━━━━━━━━━━━━━━━
 📌 اسم شبکه: ${name}
 📄 توضیحات: ${desc}
@@ -275,42 +280,43 @@
 ━━━━━━━━━━━━━━━
 📱 ارسال به روبیکا: @BikaralafJP`;
 
-        navigator.clipboard.writeText(text).then(() => {
-            const btn = document.getElementById('copyFormBtn');
-            btn.textContent = '✅ کپی شد!';
-            btn.classList.add('copied');
-            setTimeout(() => {
-                btn.textContent = '📋 کپی کل فرم';
-                btn.classList.remove('copied');
-            }, 2000);
-        }).catch(() => showToast('⚠️ کپی انجام نشد. لطفاً دستی کپی کنید.'));
-    }
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.getElementById('copyFormBtn');
+                btn.textContent = '✅ کپی شد!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = '📋 کپی کل فرم';
+                    btn.classList.remove('copied');
+                }, 2000);
+            }).catch(() => showToast('⚠️ کپی انجام نشد. لطفاً دستی کپی کنید.'));
+        }
 
-    function copyRubikaID() {
-        navigator.clipboard.writeText('@BikaralafJP').then(() => {
-            const btn = document.getElementById('copyRubikaBtn');
-            btn.textContent = '✅ کپی شد!';
-            btn.classList.add('copied');
-            setTimeout(() => {
-                btn.textContent = '📱 کپی آیدی @BikaralafJP';
-                btn.classList.remove('copied');
-            }, 2000);
-        }).catch(() => showToast('⚠️ کپی انجام نشد.'));
-    }
+        function copyRubikaID() {
+            navigator.clipboard.writeText('@BikaralafJP').then(() => {
+                const btn = document.getElementById('copyRubikaBtn');
+                btn.textContent = '✅ کپی شد!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = '📱 کپی آیدی @BikaralafJP';
+                    btn.classList.remove('copied');
+                }, 2000);
+            }).catch(() => showToast('⚠️ کپی انجام نشد.'));
+        }
 
-    let toastTimer;
-    function showToast(msg) {
-        const toast = document.getElementById('toast');
-        toast.textContent = msg;
-        toast.classList.add('show');
-        clearTimeout(toastTimer);
-        toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
-    }
+        let toastTimer;
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+        }
 
-    window.addEventListener('load', () => {
-        video.load();
-        video.loop = true;
-    });
-</script>
+        window.addEventListener('load', () => {
+            video.load();
+            video.loop = true;
+        });
+    </script>
 </body>
+
 </html>
