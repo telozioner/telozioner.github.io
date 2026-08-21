@@ -11,8 +11,7 @@
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/gh/rastikerdar/samim-font@v4.0.5/dist/font-face.css">
 
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+    <!-- Firebase SDK حذف شد – استفاده از REST API -->
 
     <link rel="stylesheet" href="asstes/css/style.css">
 
@@ -610,25 +609,42 @@
     <script>
 
         /* ==============================
-           FIREBASE
+           FIREBASE REST API (به‌جای SDK)
         ============================== */
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyARQAF3iCs-gm3Bi3BogHe4nUwYalkgV-I",
-            authDomain: "telozioner.firebaseapp.com",
-            databaseURL: "https://telozioner-default-rtdb.firebaseio.com",
-            projectId: "telozioner",
-            storageBucket: "telozioner.firebasestorage.app",
-            messagingSenderId: "737863759537",
-            appId: "1:737863759537:web:2528b2d13e56a713925490"
-        };
+        const FIREBASE_DB_URL = "https://telozioner-default-rtdb.firebaseio.com";
 
-        firebase.initializeApp(firebaseConfig);
+        async function firebaseRESTGet(path) {
+            const response = await fetch(`${FIREBASE_DB_URL}${path}.json`);
+            if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+            return response.json();
+        }
 
-        const db = firebase.database();
+        async function firebaseRESTPut(path, data) {
+            const response = await fetch(`${FIREBASE_DB_URL}${path}.json`, {
+                method: 'PUT',
+                body: JSON.stringify(data),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+            return response.json();
+        }
 
-        const CHANNELS_REF = db.ref("channels");
-        const USER_CHANNELS_REF = db.ref("userChannels");
+        async function firebaseRESTDelete(path) {
+            const response = await fetch(`${FIREBASE_DB_URL}${path}.json`, {
+                method: 'DELETE'
+            });
+            if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+            return response.json();
+        }
+
+        async function saveChannelToFirebaseREST(channelId, data) {
+            return firebaseRESTPut(`/channels/${channelId}`, data);
+        }
+
+        async function saveAllChannelsToFirebase(data) {
+            return firebaseRESTPut('/channels', data);
+        }
 
 
         /* ==============================
@@ -987,36 +1003,12 @@
 
             renderChannelCards();
 
-
+            // ذخیره در Firebase (REST)
             try {
-
-                await CHANNELS_REF
-                    .child(channelId)
-                    .child("likes")
-                    .transaction(
-                        currentLikes => {
-
-                            if (currentLikes === null)
-                                return alreadyLiked
-                                    ? 0
-                                    : 1;
-
-                            return alreadyLiked
-                                ? currentLikes - 1
-                                : currentLikes + 1;
-                        }
-                    );
-
+                await saveChannelToFirebaseREST(channelId, channels[channelId]);
             } catch (error) {
-
-                console.error(
-                    "Transaction failed:",
-                    error
-                );
-
-                showToast(
-                    "❌ خطا در به‌روزرسانی لایک"
-                );
+                console.error("REST like update error:", error);
+                showToast("⚠️ لایک به‌صورت محلی ذخیره شد اما Firebase خطا داد");
             }
         }
 
@@ -1195,112 +1187,53 @@
 
 
         /* ==============================
-           FIREBASE SYNC
+           FIREBASE SYNC (Polling)
         ============================== */
 
-        function initFirebaseSync() {
-
-            CHANNELS_REF.on(
-                "value",
-                snapshot => {
-
-                    const data =
-                        snapshot.val();
-
-
-                    if (data) {
-
-                        for (
-                            const key
-                            in DEFAULT_CHANNELS
-                        ) {
-
-                            if (!data[key]) {
-
-                                data[key] =
-                                    JSON.parse(
-                                        JSON.stringify(
-                                            DEFAULT_CHANNELS[key]
-                                        )
-                                    );
-
-                                CHANNELS_REF
-                                    .child(key)
-                                    .set(data[key]);
-
-                            } else {
-
-                                if (!data[key].password)
-                                    data[key].password =
-                                        DEFAULT_CHANNELS[key].password;
-
-                                if (!data[key].playlist)
-                                    data[key].playlist = [];
-
-                                if (!data[key].durations)
-                                    data[key].durations = [];
-
-                                if (!data[key].names)
-                                    data[key].names = [];
-
-                                if (data[key].likes === undefined)
-                                    data[key].likes = 0;
-                            }
-                        }
-
-
-                        channels = data;
-
-                    } else {
-
-                        channels =
-                            JSON.parse(
-                                JSON.stringify(
-                                    DEFAULT_CHANNELS
-                                )
-                            );
-
-                        CHANNELS_REF.set(
-                            channels
-                        );
-                    }
-
-
-                    localStorage.setItem(
-                        "televizioner_channels",
-                        JSON.stringify(channels)
-                    );
-
-
-                    renderChannelCards();
-
-
-                    if (currentChannelId)
-                        syncToLivePoint();
-
-
-                    if (
-                        adminModal.classList.contains(
-                            "show"
-                        )
-                    ) {
-
-                        if (
-                            isGlobalAdminLoggedIn
-                        ) {
-
-                            renderGlobalAdminPanel();
-
-                        } else if (
-                            isAdminLoggedIn
-                        ) {
-
-                            renderAdminPanel();
+        async function fetchChannelsFromFirebase() {
+            try {
+                const data = await firebaseRESTGet('/channels');
+                if (data) {
+                    // اطمینان از وجود کلیدهای پیش‌فرض
+                    for (const key in DEFAULT_CHANNELS) {
+                        if (!data[key]) {
+                            data[key] = JSON.parse(JSON.stringify(DEFAULT_CHANNELS[key]));
+                        } else {
+                            data[key].password = data[key].password || DEFAULT_CHANNELS[key].password;
+                            data[key].playlist = data[key].playlist || [];
+                            data[key].durations = data[key].durations || [];
+                            data[key].names = data[key].names || [];
+                            data[key].likes = data[key].likes || 0;
                         }
                     }
-
+                    channels = data;
+                } else {
+                    channels = JSON.parse(JSON.stringify(DEFAULT_CHANNELS));
+                    // ذخیره اولیه در Firebase
+                    await saveAllChannelsToFirebase(channels);
                 }
-            );
+
+                localStorage.setItem('televizioner_channels', JSON.stringify(channels));
+                renderChannelCards();
+                if (currentChannelId) syncToLivePoint();
+
+                // اگر پنل مدال باز است، آن را به‌روزرسانی کن
+                if (adminModal.classList.contains('show')) {
+                    if (isGlobalAdminLoggedIn) {
+                        renderGlobalAdminPanel();
+                    } else if (isAdminLoggedIn) {
+                        renderAdminPanel();
+                    }
+                }
+            } catch (error) {
+                console.error('Fetch channels error:', error);
+                // در صورت خطا، از localStorage استفاده می‌شود (هیچ تغییری در UI لازم نیست)
+            }
+        }
+
+        function initFirebaseSync() {
+            fetchChannelsFromFirebase(); // اولین بار
+            setInterval(fetchChannelsFromFirebase, 10000); // هر ۱۰ ثانیه
         }
 
 
@@ -2168,6 +2101,15 @@
 
                     </button>
 
+                    <button
+                        class="btn btn-secondary"
+                        onclick="forceSyncToFirebase()"
+                        style="width:100%;margin-top:8px;background:#6c5ce7;">
+
+                        🔄 همگام‌سازی با Firebase
+
+                    </button>
+
                 </div>
 
 
@@ -2257,10 +2199,7 @@
 
             try {
 
-                await CHANNELS_REF
-                    .child(currentChannelId)
-                    .set(ch);
-
+                await saveChannelToFirebaseREST(currentChannelId, ch);
 
                 showToast(
                     "✅ مشخصات در Firebase نیز ذخیره شد"
@@ -2413,10 +2352,7 @@
 
             try {
 
-                await CHANNELS_REF
-                    .child(currentChannelId)
-                    .set(ch);
-
+                await saveChannelToFirebaseREST(currentChannelId, ch);
 
                 showToast(
                     "✅ ویدئو مستقیم منتشر شد"
@@ -2425,7 +2361,7 @@
             } catch (error) {
 
                 console.error(
-                    "Firebase video save error:",
+                    "REST video save error:",
                     error
                 );
 
@@ -2586,10 +2522,7 @@
 
             try {
 
-                await CHANNELS_REF
-                    .child(currentChannelId)
-                    .set(ch);
-
+                await saveChannelToFirebaseREST(currentChannelId, ch);
 
                 showToast(
                     "🗑 ویدئو از Firebase نیز حذف شد"
@@ -2714,10 +2647,7 @@
 
             try {
 
-                await CHANNELS_REF
-                    .child(currentChannelId)
-                    .set(ch);
-
+                await saveChannelToFirebaseREST(currentChannelId, ch);
 
                 showToast(
                     "✅ ترتیب در Firebase نیز به‌روزرسانی شد"
@@ -2789,10 +2719,7 @@
 
             try {
 
-                await CHANNELS_REF
-                    .child(currentChannelId)
-                    .set(ch);
-
+                await saveChannelToFirebaseREST(currentChannelId, ch);
 
                 showToast(
                     "✅ نام ویدئو در Firebase نیز به‌روزرسانی شد"
@@ -2817,6 +2744,25 @@
                 "✅ تغییرات اعمال شد"
             );
         }
+
+
+        async function forceSyncToFirebase() {
+
+            if (!currentChannelId) return;
+
+            const ch = getChannelData(currentChannelId);
+
+            if (!ch) return;
+
+            try {
+                await saveChannelToFirebaseREST(currentChannelId, ch);
+                showToast("✅ همگام‌سازی با Firebase انجام شد");
+            } catch (error) {
+                console.error(error);
+                showToast("❌ خطا در همگام‌سازی: " + error.message);
+            }
+        }
+        window.forceSyncToFirebase = forceSyncToFirebase;
 
 
         /* ==============================
@@ -3270,38 +3216,9 @@
 
             try {
 
-                await CHANNELS_REF
-                    .child(channelId)
-                    .remove();
-
-
-                const snap =
-                    await USER_CHANNELS_REF
-                        .once("value");
-
-
-                const userChannels =
-                    snap.val() || {};
-
-
-                for (
-                    const [uid, cid]
-                    of Object.entries(
-                        userChannels
-                    )
-                ) {
-
-                    if (cid === channelId) {
-
-                        await USER_CHANNELS_REF
-                            .child(uid)
-                            .remove();
-                    }
-                }
-
+                await firebaseRESTDelete(`/channels/${channelId}`);
 
                 delete channels[channelId];
-
 
                 localStorage.setItem(
                     "televizioner_channels",
@@ -3837,6 +3754,9 @@
 
         window.shareChannelLink =
             shareChannelLink;
+
+        window.forceSyncToFirebase =
+            forceSyncToFirebase;
 
     </script>
 
