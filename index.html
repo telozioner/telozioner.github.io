@@ -2240,6 +2240,21 @@
                 ch;
 
 
+            localStorage.setItem(
+                "televizioner_channels",
+                JSON.stringify(channels)
+            );
+
+
+            renderAdminPanel();
+
+            renderChannelCards();
+
+            showToast(
+                "✅ مشخصات ذخیره شد (محلی)"
+            );
+
+
             try {
 
                 await CHANNELS_REF
@@ -2247,18 +2262,8 @@
                     .set(ch);
 
 
-                localStorage.setItem(
-                    "televizioner_channels",
-                    JSON.stringify(channels)
-                );
-
-
-                renderAdminPanel();
-
-                renderChannelCards();
-
                 showToast(
-                    "✅ مشخصات ذخیره شد"
+                    "✅ مشخصات در Firebase نیز ذخیره شد"
                 );
 
             } catch (error) {
@@ -2266,7 +2271,7 @@
                 console.error(error);
 
                 showToast(
-                    "❌ خطا در ذخیره مشخصات"
+                    "⚠️ ذخیره محلی انجام شد اما Firebase خطا داد"
                 );
             }
         }
@@ -2389,40 +2394,33 @@
                 ch;
 
 
-            try {
+            localStorage.setItem(
+                "televizioner_channels",
+                JSON.stringify(channels)
+            );
 
-                /*
-                 * ذخیره مستقیم در Firebase
-                 * برای همه کاربران
-                 */
+
+            renderAdminPanel();
+
+            if (currentChannelId)
+                syncToLivePoint();
+
+
+            nameInput.value = "";
+
+            urlInput.value = "";
+
+
+            try {
 
                 await CHANNELS_REF
                     .child(currentChannelId)
                     .set(ch);
 
 
-                localStorage.setItem(
-                    "televizioner_channels",
-                    JSON.stringify(channels)
-                );
-
-
-                nameInput.value = "";
-
-                urlInput.value = "";
-
-
-                renderAdminPanel();
-
-
                 showToast(
                     "✅ ویدئو مستقیم منتشر شد"
                 );
-
-
-                if (currentChannelId)
-                    syncToLivePoint();
-
 
             } catch (error) {
 
@@ -2431,25 +2429,8 @@
                     error
                 );
 
-
-                /*
-                 * اگر Firebase خطا داد،
-                 * مورد اضافه‌شده حذف می‌شود.
-                 */
-
-                ch.playlist.pop();
-
-                ch.names.pop();
-
-                ch.durations.pop();
-
-
-                channels[currentChannelId] =
-                    ch;
-
-
                 showToast(
-                    "❌ ذخیره ویدئو انجام نشد"
+                    "⚠️ ویدئو به‌صورت محلی ذخیره شد اما همگام‌سازی با Firebase انجام نشد"
                 );
             }
         }
@@ -2590,6 +2571,19 @@
                 ch;
 
 
+            localStorage.setItem(
+                "televizioner_channels",
+                JSON.stringify(channels)
+            );
+
+
+            renderAdminPanel();
+
+            showToast(
+                "🗑 ویدئو حذف شد (محلی)"
+            );
+
+
             try {
 
                 await CHANNELS_REF
@@ -2597,10 +2591,8 @@
                     .set(ch);
 
 
-                renderAdminPanel();
-
                 showToast(
-                    "🗑 ویدئو حذف شد"
+                    "🗑 ویدئو از Firebase نیز حذف شد"
                 );
 
             } catch (error) {
@@ -2608,7 +2600,7 @@
                 console.error(error);
 
                 showToast(
-                    "❌ خطا در حذف ویدئو"
+                    "⚠️ حذف محلی انجام شد اما Firebase خطا داد"
                 );
             }
         }
@@ -2707,6 +2699,19 @@
                 ch;
 
 
+            localStorage.setItem(
+                "televizioner_channels",
+                JSON.stringify(channels)
+            );
+
+
+            renderAdminPanel();
+
+            showToast(
+                "✅ ترتیب لیست تغییر کرد (محلی)"
+            );
+
+
             try {
 
                 await CHANNELS_REF
@@ -2714,10 +2719,8 @@
                     .set(ch);
 
 
-                renderAdminPanel();
-
                 showToast(
-                    "✅ ترتیب لیست تغییر کرد"
+                    "✅ ترتیب در Firebase نیز به‌روزرسانی شد"
                 );
 
             } catch (error) {
@@ -2725,7 +2728,7 @@
                 console.error(error);
 
                 showToast(
-                    "❌ خطا در تغییر ترتیب"
+                    "⚠️ تغییر محلی ذخیره شد اما Firebase خطا داد"
                 );
             }
         }
@@ -2771,6 +2774,19 @@
                 ch;
 
 
+            localStorage.setItem(
+                "televizioner_channels",
+                JSON.stringify(channels)
+            );
+
+
+            renderAdminPanel();
+
+            showToast(
+                "✅ نام ویدئو تغییر کرد (محلی)"
+            );
+
+
             try {
 
                 await CHANNELS_REF
@@ -2778,10 +2794,8 @@
                     .set(ch);
 
 
-                renderAdminPanel();
-
                 showToast(
-                    "✅ نام ویدئو تغییر کرد"
+                    "✅ نام ویدئو در Firebase نیز به‌روزرسانی شد"
                 );
 
             } catch (error) {
@@ -2789,7 +2803,7 @@
                 console.error(error);
 
                 showToast(
-                    "❌ خطا در تغییر نام"
+                    "⚠️ تغییر محلی ذخیره شد اما Firebase خطا داد"
                 );
             }
         }
